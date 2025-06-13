@@ -1,4 +1,4 @@
-import env from "env-var";
+import env from "env-var"
 
 export const envConfig = {
 	NODE_ENV: env
@@ -13,4 +13,4 @@ export const envConfig = {
 		.asString(),
 	DATABASE_URL: env.get("DATABASE_URL").required().asString(),
 	JWT_SECRET: env.get("JWT_SECRET").required().asString(),
-};
+}

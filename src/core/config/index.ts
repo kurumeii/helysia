@@ -1,1 +1,1 @@
-export { envConfig } from "./env.config.ts";
+export { envConfig } from "./env.config.ts"

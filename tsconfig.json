@@ -23,6 +23,8 @@
 		"baseUrl": "./src",
 		"paths": {
 			"@config": ["core/config/index.ts"],
+			"@plugin": ["core/plugin/index.ts"],
+			"@shared/*": ["core/components/shared.tsx"],
 			"@/*": ["./*"]
 		}
 	},
