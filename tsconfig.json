@@ -1,32 +1,32 @@
 {
-	"compilerOptions": {
-		"lib": ["ESNext"],
-		"module": "NodeNext",
-		"target": "ESNext",
-		"moduleResolution": "NodeNext",
-		"esModuleInterop": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"allowSyntheticDefaultImports": true,
-		"noEmit": true,
-		"allowImportingTsExtensions": true,
-		"noUncheckedIndexedAccess": true,
-		"jsx": "react",
-		"jsxFactory": "Html.createElement",
-		"jsxFragmentFactory": "Html.Fragment",
-		"plugins": [
-			{
-				"name": "@kitajs/ts-html-plugin"
-			}
-		],
-		"types": ["@kitajs/html/htmx.d.ts"],
-		"baseUrl": "./src",
-		"paths": {
-			"@config": ["core/config/index.ts"],
-			"@plugin": ["core/plugin/index.ts"],
-			"@shared/*": ["core/components/shared.tsx"],
-			"@/*": ["./*"]
-		}
-	},
-	"include": ["src"]
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "NodeNext",
+    "target": "ESNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "noUncheckedIndexedAccess": true,
+    "jsx": "react",
+    "jsxFactory": "Html.createElement",
+    "jsxFragmentFactory": "Html.Fragment",
+    "plugins": [
+      {
+        "name": "@kitajs/ts-html-plugin"
+      }
+    ],
+    "types": ["@kitajs/html/htmx.d.ts"],
+    "baseUrl": "./src",
+    "paths": {
+      "@config": ["config/index.ts"],
+      "@plugin": ["plugin/index.ts"],
+      "@components/*": ["core/components/*"],
+      "@db": ["database/index.ts"]
+    }
+  },
+  "include": ["src"]
 }

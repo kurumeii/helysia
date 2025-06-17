@@ -1,6 +1,6 @@
-import type { ElysiaApp } from "@/server.ts"
+import type { ElysiaApp } from "@/index.ts"
+import { BaseHtml } from "@components/shared.tsx"
 import { Html } from "@elysiajs/html"
-import { BaseHtml } from "@shared/*"
 
 export default (app: ElysiaApp) =>
 	app

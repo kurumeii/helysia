@@ -1,1 +1,13 @@
-{"cache":{"useCache":true},"version":"0.2","ignorePaths":["README.md","public/**"],"language":"en","words":["Elysia","elysiajs","tqman","htmx","gtramontina","kitajs","bogeychan","Helysia","daisyui"]}
+{
+  "cache": { "useCache": true },
+  "version": "0.2",
+  "ignorePaths": ["README.md", "public/**"],
+  "language": "en, vi",
+  "dictionaryDefinitions": [
+    {
+      "name": "project-words",
+      "path": ".cspell/project-words.txt"
+    }
+  ],
+  "dictionaries": ["project-words"]
+}
