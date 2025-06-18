@@ -14,7 +14,13 @@ export const BaseHtml = (props: BaseHtmlProps) => {
 			<head>
 				<meta charset="UTF-8" />
 				<script src="/static/scripts/htmx.min.js" />
-				<link rel="stylesheet" href="/static/global.css" />
+				<link href="/static/global.css" rel="stylesheet" type="text/css" />
+				<link
+					href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css"
+					rel="stylesheet"
+					type="text/css"
+				/>
+				<link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
 				<title safe>{props.title ?? "Helysia"}</title>
 				{props.description && Array.isArray(props.description) ? (
 					<meta safe name="description" content={props.description.join(",")} />

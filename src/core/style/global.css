@@ -1,5 +1,4 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
 	themes: light --default, dark --prefersdark, coffee;
 }
