@@ -1,13 +1,13 @@
 {
-  "cache": { "useCache": true },
-  "version": "0.2",
-  "ignorePaths": ["README.md", "public/**"],
-  "language": "en, vi",
-  "dictionaryDefinitions": [
-    {
-      "name": "project-words",
-      "path": ".cspell/project-words.txt"
-    }
-  ],
-  "dictionaries": ["project-words"]
+	"cache": { "useCache": true },
+	"version": "0.2",
+	"ignorePaths": ["README.md", "public/**", "**/drizzle/meta/**"],
+	"language": "en, vi",
+	"dictionaryDefinitions": [
+		{
+			"name": "project-words",
+			"path": "./cspell/project-words.txt"
+		}
+	],
+	"dictionaries": ["project-words"]
 }

@@ -11,9 +11,8 @@
 		"noEmit": true,
 		"allowImportingTsExtensions": true,
 		"noUncheckedIndexedAccess": true,
-		"jsx": "react",
-		"jsxFactory": "Html.createElement",
-		"jsxFragmentFactory": "Html.Fragment",
+		"jsx": "react-jsx",
+		"jsxImportSource": "@kitajs/html",
 		"plugins": [
 			{
 				"name": "@kitajs/ts-html-plugin"
@@ -24,7 +23,6 @@
 		"paths": {
 			"@config": ["config/index.ts"],
 			"@plugin": ["plugin/index.ts"],
-			"@components/*": ["core/components/*"],
 			"@db": ["database/index.ts"],
 			"@/*": ["./*"]
 		}

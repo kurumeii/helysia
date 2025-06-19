@@ -5,8 +5,10 @@
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
 		"start": "NODE_ENV=production bun run ./src/index.ts",
-		"build:css": "tailwindcss -i ./src/core/style/global.css -o ./public/global.css ",
-		"lint": "bun x @biomejs/biome check --write src",
+		"build:css": "tailwindcss -i ./src/style/global.css -o ./public/global.css ",
+		"lint": "bun lint:code && bun lint:spell",
+		"lint:code": "bun x @biomejs/biome check --write src",
+		"lint:spell": "bun x cspell lint src",
 		"generate": "bun x drizzle-kit generate --config ./src/config/drizzle.config.ts",
 		"push": "bun x drizzle-kit push --config ./src/config/drizzle.config.ts",
 		"migrate": "bun x drizzle-kit migrate --config ./src/config/drizzle.config.ts",
