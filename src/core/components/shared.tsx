@@ -1,5 +1,3 @@
-import { Html } from "@elysiajs/html"
-
 type BaseHtmlProps = {
 	children: JSX.Element | JSX.Element[]
 	title?: string
@@ -20,7 +18,11 @@ export const BaseHtml = (props: BaseHtmlProps) => {
 					rel="stylesheet"
 					type="text/css"
 				/>
-				<link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+				<link
+					href="https://cdn.jsdelivr.net/npm/daisyui@5"
+					rel="stylesheet"
+					type="text/css"
+				/>
 				<title safe>{props.title ?? "Helysia"}</title>
 				{props.description && Array.isArray(props.description) ? (
 					<meta safe name="description" content={props.description.join(",")} />

@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
 		"start": "NODE_ENV=production bun run ./src/index.ts",
-		"build:css": "tailwindcss -i ./src/style/global.css -o ./public/global.css ",
+		"build:css": "bunx --bun tailwindcss -i ./src/core/style/global.css -o ./public/global.css ",
 		"lint": "bun lint:code && bun lint:spell",
 		"lint:code": "bun x @biomejs/biome check --write src",
 		"lint:spell": "bun x cspell lint src",
