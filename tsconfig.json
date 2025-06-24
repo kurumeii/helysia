@@ -24,7 +24,7 @@
 			"@config": ["config/index.ts"],
 			"@plugin": ["plugin/index.ts"],
 			"@db": ["database/index.ts"],
-			"@components/*": ["core/components/*"],
+			"@components/*": ["shared/components/*"],
 			"@/*": ["./*"]
 		}
 	},

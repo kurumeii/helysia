@@ -9,3 +9,4 @@ kitajs
 tqman
 typebox
 bunx
+prefersdark
