@@ -2,7 +2,7 @@ import { etag } from "@bogeychan/elysia-etag"
 import { envConfig } from "@config"
 import { cors } from "@elysiajs/cors"
 import { html } from "@elysiajs/html"
-// import { swagger } from "@elysiajs/swagger"
+import { swagger } from "@elysiajs/swagger"
 import { customPlugin } from "@plugin"
 import { logger } from "@tqman/nice-logger"
 import type { SignalsListener } from "bun"
@@ -12,7 +12,7 @@ import { helmet } from "elysia-helmet"
 
 export const app = new Elysia()
 	.use(logger())
-	// .use(swagger())
+	.use(swagger())
 	.use(cors())
 	.use(html())
 	.use(etag())

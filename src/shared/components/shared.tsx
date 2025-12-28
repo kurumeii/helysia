@@ -35,10 +35,7 @@ export const BaseHtml = (props: BaseHtmlProps) => {
 					<meta safe name="keywords" content={props.meta} />
 				)}
 			</head>
-			<body
-				hx-boost={true}
-				class={"h-screen w-screen flex justify-center items-center"}
-			>
+			<body class={"h-screen w-screen flex justify-center items-center"}>
 				{safeChildren}
 			</body>
 		</html>
