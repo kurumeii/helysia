@@ -19,13 +19,13 @@
 			}
 		],
 		"types": ["@kitajs/html/htmx.d.ts"],
-		"baseUrl": "./src",
 		"paths": {
-			"@config": ["config/index.ts"],
-			"@plugin": ["plugin/index.ts"],
-			"@db": ["database/index.ts"],
-			"@components/*": ["shared/components/*"],
-			"@/*": ["./*"]
+			"*": ["./src/*"],
+			"@config": ["./src/config/index.ts"],
+			"@plugin": ["./src/plugin/index.ts"],
+			"@db": ["./src/database/index.ts"],
+			"@components/*": ["./src/shared/components/*"],
+			"@/*": ["./src/*"]
 		}
 	},
 	"include": ["src"]
