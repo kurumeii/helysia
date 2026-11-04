@@ -4,14 +4,17 @@ import { envConfig } from "@config";
 import { cors } from "@elysiajs/cors";
 import { html } from "@elysiajs/html";
 import { swagger } from "@elysiajs/swagger";
-import { gracefulShutdownPlugin, staticAssetsPlugin } from "@plugin";
-import { logger } from "@tqman/nice-logger";
+import {
+	gracefulShutdownPlugin,
+	loggerPlugin,
+	staticAssetsPlugin,
+} from "@plugin";
 import { Elysia } from "elysia";
 import { autoload } from "elysia-autoload";
 import { helmet } from "elysia-helmet";
 
 export const app = new Elysia()
-	.use(logger())
+	.use(loggerPlugin())
 	.use(swagger())
 	.use(cors())
 	.use(html())
@@ -23,19 +26,13 @@ export const app = new Elysia()
 	)
 	.use(staticAssetsPlugin())
 	.use(gracefulShutdownPlugin())
-	// Every `index.ts(x)` under src/modules is a controller (see AGENTS.md).
-	// Folder names become URLs; `(group)` folders are dropped from the URL.
 	.use(
 		await autoload({
 			dir: "./modules",
 			pattern: "**/index.{ts,tsx}",
 		}),
 	)
-	.onStart(({ server }) => {
-		console.log(`Server started at ${server?.url.origin}`);
-	})
-	.onError(({ code, error, request, status }) => {
-		// htmx forms: show a friendly message instead of raw validation JSON.
+	.onError(({ code, request, status }) => {
 		if (code === "VALIDATION" && request.headers.has("hx-request")) {
 			return status(
 				422,
@@ -44,6 +41,5 @@ export const app = new Elysia()
 				}),
 			);
 		}
-		console.error(error);
 	})
 	.listen(envConfig.PORT);

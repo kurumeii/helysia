@@ -8,7 +8,6 @@ export const createDb = () =>
 			url: envConfig.DATABASE_URL,
 		},
 		casing: "snake_case",
-		// Logs every SQL statement with its parameters; keep it out of production logs.
 		logger: envConfig.NODE_ENV !== "production",
 		schema,
 	});

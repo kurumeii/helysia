@@ -1,13 +1,11 @@
 import { Elysia } from "elysia";
+import pc from "picocolors";
 
 type GracefulShutdownOptions = {
 	/** Max time to wait for in-flight requests before forcing exit. */
 	timeoutMs?: number;
 };
 
-// Stops the server on SIGINT/SIGTERM (and on uncaughtException, with exit code 1).
-// Handlers are registered in `onStart`, not at import time, so importing the
-// plugin has no side effects. Put cleanup (e.g. closing the db pool) in `.onStop`.
 export const gracefulShutdownPlugin = ({
 	timeoutMs = 10_000,
 }: GracefulShutdownOptions = {}) =>
@@ -17,14 +15,14 @@ export const gracefulShutdownPlugin = ({
 		let shuttingDown = false;
 
 		const shutdown = async (reason: string, exitCode: number) => {
-			// A second signal while draining must not restart the shutdown.
 			if (shuttingDown) return;
 			shuttingDown = true;
-			console.log(`Received ${reason}. Initiating graceful shutdown...`);
+			console.log(
+				pc.yellow(`Received ${reason}. Initiating graceful shutdown...`),
+			);
 
-			// A hung in-flight request would block app.stop() forever.
 			setTimeout(() => {
-				console.error("Graceful shutdown timed out. Forcing exit.");
+				console.error(pc.red("Graceful shutdown timed out. Forcing exit."));
 				process.exit(1);
 			}, timeoutMs).unref();
 

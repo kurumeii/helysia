@@ -14,7 +14,6 @@
         "@elysiajs/swagger": "^1.3.1",
         "@kitajs/ts-html-plugin": "^4.1.4",
         "@tailwindcss/cli": "^4.3.4",
-        "@tqman/nice-logger": "^1.1.1",
         "daisyui": "^5.7.50",
         "drizzle-orm": "^0.45.4",
         "drizzle-typebox": "^0.3.3",
@@ -22,6 +21,7 @@
         "elysia-autoload": "^1.7.0",
         "elysia-helmet": "^3.1.0",
         "env-var": "^7.5.0",
+        "picocolors": "^1.1.1",
         "tailwindcss": "^4.3.4",
       },
       "devDependencies": {
@@ -359,8 +359,6 @@
     "@tokenizer/inflate": ["@tokenizer/inflate@0.6.0", "", { "dependencies": { "debug": "^4.4.3", "strtok3": "^10.6.2", "token-types": "^6.1.2" } }, "sha512-+0RDxhBkyT9xMnGdJAwmats9yxRLR8ypJrQgrnLqOu4Gv/aHlnxYgdGVy2QTwvBl6IF/w2Hr+ZNirH+iMUbVZA=="],
 
     "@tokenizer/token": ["@tokenizer/token@0.3.0", "", {}, "sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A=="],
-
-    "@tqman/nice-logger": ["@tqman/nice-logger@1.1.1", "", { "dependencies": { "picocolors": "^1.1.1" }, "peerDependencies": { "elysia": ">=1.2.0" } }, "sha512-/0PWFNXaUE3Lx9IQ8O0aurH+PW7x9GrCK/WyY4vVVWPz+fShijmt9vPCHLI226AZvwVfvU4BOIrQdCqzsBgeVg=="],
 
     "@types/bun": ["@types/bun@1.4.4", "", { "dependencies": { "bun-types": "1.4.4" } }, "sha512-9wkRDXUXK124pEnAutE6n/l18j+i9GC5IAHK8TmX/2nlySETmky0OU6yL5U8pW1AoKh++AN9auDCr647BfurjQ=="],
 

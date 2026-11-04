@@ -25,7 +25,7 @@ There is no test suite. Swagger is served by `@elysiajs/swagger` at `/swagger`.
 
 ## Architecture
 
-- **Entry**: `src/index.ts` builds the `app` (logger, swagger, cors, html, etag, helmet, static, then `autoload` of `src/modules`). Anything a module needs (`db`, `user`, services) is added by that module with `.use(...)`, not by the app.
+- **Entry**: `src/index.ts` builds the `app` (`loggerPlugin` from `src/plugin/logger.plugin.ts` for startup, request and error logs, then swagger, cors, html, etag, helmet, static, graceful shutdown, then `autoload` of `src/modules`). Anything a module needs (`db`, `user`, services) is added by that module with `.use(...)`, not by the app.
 - **Feature modules** (`src/modules/<feature>/`): each feature owns its controller, service and markup. `elysia-autoload` loads only `index.ts(x)` files (`pattern: "**/index.{ts,tsx}"`); other files in a folder (`service.ts`, `page.tsx`, `components.tsx`) are never loaded as routes. A controller is a default-exported `new Elysia()`; its routes are relative to the folder URL (`.get("/")`).
 - **URLs come from folders**: `todos/index.tsx` is `/todos`; `(group)` folders are dropped from the URL, so `(home)/index.tsx` is `/` and `(auth)/login/index.tsx` is `/login`. To add a feature, add a folder with an `index.tsx`; no registration step.
 - **Layers inside a module**: controller (`index.tsx`: HTTP, validation, cookies, status codes) calls the service (`service.ts`: business logic and queries, plain values in and out, no HTTP) and renders a page (`page.tsx`: pure component, props in and HTML out, no Elysia or db imports). Shared markup (`BaseHtml`, `Navbar`, `ErrorAlert`) is in `src/shared/components/`.

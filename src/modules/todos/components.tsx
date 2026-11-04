@@ -1,8 +1,5 @@
 import type { Todo } from "@db";
 
-// `hx-target="this"` + `outerHTML` on the <li> is inherited by the buttons and
-// forms inside, so each action replaces just its own row.
-
 export const TodoRow = ({ todo }: { todo: Todo }) => (
 	<li
 		id={`todo-${todo.id}`}

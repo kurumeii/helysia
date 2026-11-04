@@ -10,8 +10,6 @@ import type { Db } from "@/database/client.ts";
 const owned = (userId: number, id: number) =>
 	and(eq(todos.id, id), eq(todos.user_id, userId));
 
-// Business logic bound to a db handle. It takes and returns plain values and
-// knows nothing about HTTP, so it can be tested with a fake `db`.
 export const createTodoService = (db: Db) => ({
 	list: (userId: number) =>
 		db
@@ -51,7 +49,6 @@ export const createTodoService = (db: Db) => ({
 		return row;
 	},
 
-	/** Returns `true` when a row was deleted. */
 	remove: async (userId: number, id: number) => {
 		const rows = await db
 			.delete(todos)
@@ -61,7 +58,6 @@ export const createTodoService = (db: Db) => ({
 	},
 });
 
-// Gives any controller that `.use`s it a `todoService` in its context.
 export const TodoService = new Elysia({ name: "Todo.Service" })
 	.use(dbPlugin)
 	.derive({ as: "scoped" }, ({ db }) => ({

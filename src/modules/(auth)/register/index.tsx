@@ -4,7 +4,6 @@ import { Elysia, t } from "elysia";
 import { AuthService } from "../service.ts";
 import { RegisterPage } from "./page.tsx";
 
-// Public route (guests only): signed-in users are sent to /todos.
 export default new Elysia()
 	.use(authPlugin())
 	.use(AuthService)

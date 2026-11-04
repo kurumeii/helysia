@@ -10,15 +10,6 @@ export type SessionUser = {
 	username: string;
 };
 
-/**
- * Cookie-based JWT authentication.
- *
- * - `user`: the signed-in user, or `null` (available on every route after this plugin).
- * - `startSession(user)` / `endSession()`: set or clear the session cookie.
- * - Use `requireAuth()` (below) to protect routes.
- *
- * The token is stateless: it cannot be revoked before it expires.
- */
 export const authPlugin = () =>
 	new Elysia({
 		name: "plugin.auth",
@@ -71,10 +62,6 @@ export const authPlugin = () =>
 			};
 		});
 
-/**
- * Protects every route registered after `.use(requireAuth())` in the same
- * instance: guests are rejected and `user` becomes a non-null `SessionUser`.
- */
 export const requireAuth = () =>
 	new Elysia({
 		name: "plugin.require-auth",
@@ -84,7 +71,6 @@ export const requireAuth = () =>
 			if (user) {
 				return { user };
 			}
-			// htmx requests: tell the browser to navigate. Pages: plain redirect.
 			if (request.headers.has("hx-request")) {
 				set.headers["hx-redirect"] = "/login";
 				return status(401, "Unauthorized");

@@ -12,7 +12,6 @@ export const BaseHtml = (props: BaseHtmlProps) => {
 			<head>
 				<meta charset="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				{/* Let htmx swap 4xx/5xx responses so forms can show server errors. */}
 				<meta
 					name="htmx-config"
 					content='{"responseHandling":[{"code":".*","swap":true}]}'

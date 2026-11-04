@@ -7,15 +7,12 @@ import { TodoService } from "./service.ts";
 const params = t.Object({ id: t.Numeric() });
 const body = t.Object({ title: t.String({ minLength: 1, maxLength: 200 }) });
 
-// Protected routes: `requireAuth` rejects guests and gives a non-null `user`.
 export default new Elysia()
 	.use(requireAuth())
 	.use(TodoService)
-	// Read (list)
 	.get("/", async ({ user, todoService }) => (
 		<TodosPage user={user} todos={await todoService.list(user.id)} />
 	))
-	// Create
 	.post(
 		"/",
 		async ({ user, todoService, body }) => {
@@ -24,7 +21,6 @@ export default new Elysia()
 		},
 		{ body },
 	)
-	// Read (one row, also used by "Cancel" in the edit form)
 	.get(
 		"/:id",
 		async ({ user, todoService, params, status }) => {
@@ -41,7 +37,6 @@ export default new Elysia()
 		},
 		{ params },
 	)
-	// Update
 	.put(
 		"/:id",
 		async ({ user, todoService, params, body, status }) => {
@@ -58,7 +53,6 @@ export default new Elysia()
 		},
 		{ params },
 	)
-	// Delete: an empty 200 response makes htmx remove the row.
 	.delete(
 		"/:id",
 		async ({ user, todoService, params, status }) =>
