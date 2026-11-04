@@ -1,19 +1,7 @@
-import { envConfig } from "@config"
-import * as schema from "@db"
-import { drizzle } from "drizzle-orm/bun-sql"
 import { Elysia } from "elysia"
+import { createDb } from "@/database/client.ts"
 
-export const dbPlugin = async () =>
-	new Elysia({
-		name: "plugin.db",
-	}).decorate(
-		"db",
-		drizzle({
-			connection: {
-				url: envConfig.DATABASE_URL,
-			},
-			casing: "snake_case",
-			logger: true,
-			schema,
-		})
-	)
+// A single instance (not a factory), so the whole app shares one connection pool.
+export const dbPlugin = new Elysia({
+	name: "plugin.db",
+}).decorate("db", createDb())

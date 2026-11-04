@@ -5,14 +5,14 @@
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
 		"start": "NODE_ENV=production bun run ./src/index.ts",
-		"build:css": "bunx --bun tailwindcss -i ./src/core/style/global.css -o ./public/global.css ",
+		"build:css": "bunx --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css ",
 		"lint": "bun lint:code && bun lint:spell",
-		"lint:code": "bun x @biomejs/biome check --write src",
-		"lint:spell": "bun x cspell lint src",
-		"generate": "bun x drizzle-kit generate --config ./src/config/drizzle.config.ts",
-		"push": "bun x drizzle-kit push --config ./src/config/drizzle.config.ts",
-		"migrate": "bun x drizzle-kit migrate --config ./src/config/drizzle.config.ts",
-		"studio": "bun x drizzle-kit studio --config ./src/config/drizzle.config.ts"
+		"lint:code": "biome check --write src",
+		"lint:spell": "cspell lint src",
+		"generate": "drizzle-kit generate --config ./src/config/drizzle.config.ts",
+		"push": "drizzle-kit push --config ./src/config/drizzle.config.ts",
+		"migrate": "drizzle-kit migrate --config ./src/config/drizzle.config.ts",
+		"studio": "drizzle-kit studio --config ./src/config/drizzle.config.ts"
 	},
 	"dependencies": {
 		"@bogeychan/elysia-etag": "^0.1.0",
@@ -37,7 +37,9 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.6.4",
 		"@types/bun": "^1.4.4",
+		"cspell": "^10.4.0",
 		"drizzle-kit": "^0.31.11",
+		"postgres": "^4.0.0",
 		"typescript": "^7.0.2"
 	},
 	"trustedDependencies": ["@biomejs/biome"]
