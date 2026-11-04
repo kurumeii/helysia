@@ -3,9 +3,9 @@ import { ROUTES } from "@/shared/routes.ts";
 
 export const RegisterPage = () => (
 	<Layout user={null} title="Register">
-		<main class="mx-auto max-w-sm p-4">
+		<main class="flex flex-1 items-center justify-center p-4">
 			<form
-				class="card bg-base-100 shadow-md"
+				class="card w-full max-w-sm bg-base-100 shadow-md"
 				hx-post={ROUTES.register}
 				hx-target="#form-error"
 			>

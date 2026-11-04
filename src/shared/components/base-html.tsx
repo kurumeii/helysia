@@ -6,7 +6,6 @@ export type BaseHtmlProps = {
 };
 
 export const BaseHtml = (props: BaseHtmlProps) => {
-	const safeChildren = props.children;
 	return (
 		<html lang="en" data-theme="coffee">
 			<head>
@@ -30,7 +29,9 @@ export const BaseHtml = (props: BaseHtmlProps) => {
 					<meta safe name="keywords" content={props.meta} />
 				)}
 			</head>
-			<body class="min-h-screen bg-base-200">{safeChildren}</body>
+			<body class="min-h-screen flex flex-col bg-base-200">
+				{props.children}
+			</body>
 		</html>
 	);
 };
