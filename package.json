@@ -3,7 +3,9 @@
 	"type": "module",
 	"module": "./src/index.ts",
 	"scripts": {
-		"dev": "bun --watch src/index.ts",
+		"dev": "bun run --parallel dev:server dev:css",
+		"dev:server": "bun --watch src/index.ts",
+		"dev:css": "bunx --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css --watch=always",
 		"start": "NODE_ENV=production bun run ./src/index.ts",
 		"build:css": "bunx --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css ",
 		"lint": "bun lint:code && bun lint:spell",
