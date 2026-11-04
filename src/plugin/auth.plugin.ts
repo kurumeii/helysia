@@ -60,21 +60,17 @@ export const authPlugin = () =>
 					});
 				},
 			};
-		});
-
-export const requireAuth = () =>
-	new Elysia({
-		name: "plugin.require-auth",
-	})
-		.use(authPlugin())
-		.resolve({ as: "scoped" }, ({ user, request, set, status }) => {
-			if (user) {
-				return { user };
-			}
-			if (request.headers.has("hx-request")) {
-				set.headers["hx-redirect"] = "/login";
-				return status(401, "Unauthorized");
-			}
-			set.headers.location = "/login";
-			return status(302, "");
+		})
+		.macro("auth", {
+			resolve: ({ user, request, set, status }) => {
+				if (user) {
+					return { user };
+				}
+				if (request.headers.has("hx-request")) {
+					set.headers["hx-redirect"] = "/login";
+					return status(401, "Unauthorized");
+				}
+				set.headers.location = "/login";
+				return status(302, "");
+			},
 		});

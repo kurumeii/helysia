@@ -1,4 +1,4 @@
-import { requireAuth } from "@plugin";
+import { authPlugin } from "@plugin";
 import { Elysia, t } from "elysia";
 import { TodoEditRow, TodoRow } from "./components.tsx";
 import { TodosPage } from "./page.tsx";
@@ -8,8 +8,9 @@ const params = t.Object({ id: t.Numeric() });
 const body = t.Object({ title: t.String({ minLength: 1, maxLength: 200 }) });
 
 export default new Elysia()
-	.use(requireAuth())
+	.use(authPlugin())
 	.use(TodoService)
+	.guard({ auth: true })
 	.get("/", async ({ user, todoService }) => (
 		<TodosPage user={user} todos={await todoService.list(user.id)} />
 	))
