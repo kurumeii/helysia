@@ -4,9 +4,8 @@ import { envConfig } from "@config";
 import { cors } from "@elysiajs/cors";
 import { html } from "@elysiajs/html";
 import { swagger } from "@elysiajs/swagger";
-import { staticPlugin } from "@plugin";
+import { gracefulShutdownPlugin, staticPlugin } from "@plugin";
 import { logger } from "@tqman/nice-logger";
-import type { SignalsListener } from "bun";
 import { Elysia } from "elysia";
 import { autoload } from "elysia-autoload";
 import { helmet } from "elysia-helmet";
@@ -23,6 +22,7 @@ export const app = new Elysia()
 		}),
 	)
 	.use(staticPlugin())
+	.use(gracefulShutdownPlugin())
 	// Every `index.ts(x)` under src/modules is a controller (see AGENTS.md).
 	// Folder names become URLs; `(group)` folders are dropped from the URL.
 	.use(
@@ -47,14 +47,3 @@ export const app = new Elysia()
 		console.error(error);
 	})
 	.listen(envConfig.PORT);
-
-const handleShutdown: SignalsListener = async (signal) => {
-	console.log(`Received ${signal}. Initiating graceful shutdown...`);
-	await app.stop();
-	process.exit(0);
-};
-
-process
-	.on("SIGINT", handleShutdown)
-	.on("SIGTERM", handleShutdown)
-	.on("uncaughtException", handleShutdown);
