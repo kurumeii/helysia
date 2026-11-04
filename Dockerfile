@@ -1,6 +1,6 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1.2.5 AS base
+FROM oven/bun:1.4.4 AS base
 WORKDIR /usr/src/app
 
 # install dependencies into temp directory
@@ -25,16 +25,13 @@ ENV NODE_ENV=production
 RUN bun x tsc --noEmit
 
 # copy production dependencies and source code into final image
+# configuration (DATABASE_URL, JWT_SECRET) comes from the environment at runtime
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/.env .
-COPY --from=prerelease /usr/src/app/.env.production .
-COPY --from=prerelease /usr/src/app/bun.lock .
-RUN mkdir -p /usr/src/app/src
-COPY --from=prerelease /usr/src/app/src ./src
-COPY --from=prerelease /usr/src/app/package.json .
-COPY --from=prerelease /usr/src/app/tsconfig.json .
-COPY --from=prerelease /usr/src/app/drizzle ./drizzle
-COPY --from=prerelease /usr/src/app/drizzle.config.ts .
+COPY --from=prerelease --chown=bun:bun /usr/src/app/package.json /usr/src/app/bun.lock /usr/src/app/tsconfig.json ./
+COPY --from=prerelease --chown=bun:bun /usr/src/app/src ./src
+COPY --from=prerelease --chown=bun:bun /usr/src/app/public ./public
 
+USER bun
+EXPOSE 3000
 ENTRYPOINT [ "bun", "start" ]

@@ -8,6 +8,8 @@ Starter template: Bun + Elysia backend, server-rendered JSX (`@kitajs/html`), ht
 
 ## Commands
 
+Bun 1.4.4 or newer: pinned in `.bun-version`, `package.json` `engines` and the `Dockerfile` base image. Bun does not enforce `engines`, so keep these three in sync by hand.
+
 ```bash
 bun install
 cp .env.example .env            # needs DATABASE_URL and JWT_SECRET (openssl rand -base64 32)
@@ -47,4 +49,4 @@ There is no test suite. Swagger is served by `@elysiajs/swagger` at `/swagger`.
 - Plugins are named (`new Elysia({ name: "plugin.x" })`), live in `src/plugin/` and are re-exported from `src/plugin/index.ts`. Hook scope matters: `derive`, `resolve` and `onError` default to `local`, so use `{ as: "global" }` (or `"scoped"`) for anything other instances must see.
 - `Layout` takes exactly one child (the page's `<main>`), not an array.
 - Comments: write one only when the reason is not obvious from the code (a security rationale, a runtime surprise). Do not add comments that restate the code or describe a layer's role; this file covers that.
-- The `Dockerfile` and `docker-compose.yml` are stale: they reference `./drizzle` and `./drizzle.config.ts` at the repo root (both now live under `src/`) and do not pass `DATABASE_URL`/`JWT_SECRET` to the app.
+- Docker: the image copies `src/` and `public/` only and never `.env*` (`.dockerignore` excludes them); `DATABASE_URL` and `JWT_SECRET` come from the environment, set in `docker-compose.yml` from `.env`. Migrations run through the `migrate` compose service (profile `tools`, built from the `prerelease` stage because `drizzle-kit` is a dev dependency). Keep new runtime files (anything read from disk, like `public/`) in the `release` stage's `COPY` list. Postgres is pinned to `postgres:18`, whose image requires the data volume mounted at `/var/lib/postgresql` (not `.../data`). The release `COPY`s use `--chown=bun:bun` because the container runs as the non-root `bun` user and a checkout with mode 640 files would otherwise be unreadable. Verified with podman 6.1.4 and podman-compose 1.6.0 (build, `migrate`, register, login and todo CRUD against the compose Postgres); not run under Docker.

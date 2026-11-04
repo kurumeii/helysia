@@ -6,6 +6,8 @@ It ships with a working demo (register, log in, per-user todo CRUD, public and p
 
 ## Quick start
 
+Requires Bun 1.4.4 or newer (pinned in `.bun-version` and `package.json` `engines`; Bun does not enforce `engines`, so check `bun --version`).
+
 ```bash
 tiged kurumeii/helysia <your-project-name>
 cd <your-project-name>
@@ -246,4 +248,13 @@ Validate with Elysia's `t` and return a fragment for htmx (from `todos/index.tsx
 ## Production
 
 - Set `NODE_ENV=production` so the session cookie gets the `Secure` flag, which needs HTTPS.
-- The `Dockerfile` and `docker-compose.yml` are stale: they reference `./drizzle` and `./drizzle.config.ts` at the repo root (both now live under `src/`) and do not pass `DATABASE_URL` or `JWT_SECRET` to the app. Fix them before deploying.
+- **Docker:** `docker-compose.yml` runs the app and Postgres. Put `JWT_SECRET` and `POSTGRES_PASSWORD` in `.env` (compose refuses to start without them; use a URL-safe `POSTGRES_PASSWORD`, e.g. `openssl rand -hex 16`), then:
+
+  ```bash
+  docker compose up -d --build
+  docker compose --profile tools run --rm migrate   # apply migrations
+  ```
+
+  If you used the earlier dev setup, note that Postgres is now pinned to 18 and the data volume mounts at `/var/lib/postgresql`: an old `postgres_data` volume is not reused, so remove it (`docker volume rm`) or re-run `bun migrate` against the fresh database.
+
+  The image contains no `.env` files; configuration comes from the environment, and `.dockerignore` keeps `.env*` out of the build context. The `app` service builds `DATABASE_URL` for the `postgres` service itself, so do not reuse the `localhost` URL from `.env.example`.
