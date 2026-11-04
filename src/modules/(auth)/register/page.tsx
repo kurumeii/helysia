@@ -1,9 +1,8 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx";
+import { Layout } from "@components/layout.tsx";
 import { ROUTES } from "@/shared/routes.ts";
 
 export const RegisterPage = () => (
-	<BaseHtml title="Register">
-		<Navbar user={null} />
+	<Layout user={null} title="Register">
 		<main class="mx-auto max-w-sm p-4">
 			<form
 				class="card bg-base-100 shadow-md"
@@ -40,5 +39,5 @@ export const RegisterPage = () => (
 				</div>
 			</form>
 		</main>
-	</BaseHtml>
+	</Layout>
 );

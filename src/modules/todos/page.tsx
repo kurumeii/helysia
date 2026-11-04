@@ -1,4 +1,4 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx";
+import { Layout } from "@components/layout.tsx";
 import type { Todo } from "@db";
 import { ROUTES } from "@/shared/routes.ts";
 import { TodoRow } from "./components.tsx";
@@ -9,8 +9,7 @@ type TodosPageProps = {
 };
 
 export const TodosPage = ({ user, todos }: TodosPageProps) => (
-	<BaseHtml title="Todos">
-		<Navbar user={user} />
+	<Layout user={user} title="Todos">
 		<main class="mx-auto max-w-xl space-y-4 p-4">
 			<form
 				class="flex gap-2"
@@ -38,5 +37,5 @@ export const TodosPage = ({ user, todos }: TodosPageProps) => (
 				))}
 			</ul>
 		</main>
-	</BaseHtml>
+	</Layout>
 );

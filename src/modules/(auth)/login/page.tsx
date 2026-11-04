@@ -1,9 +1,8 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx";
+import { Layout } from "@components/layout.tsx";
 import { ROUTES } from "@/shared/routes.ts";
 
 export const LoginPage = () => (
-	<BaseHtml title="Log in">
-		<Navbar user={null} />
+	<Layout user={null} title="Log in">
 		<main class="mx-auto max-w-sm p-4">
 			<form
 				class="card bg-base-100 shadow-md"
@@ -37,5 +36,5 @@ export const LoginPage = () => (
 				</div>
 			</form>
 		</main>
-	</BaseHtml>
+	</Layout>
 );

@@ -1,5 +1,5 @@
 import { etag } from "@bogeychan/elysia-etag";
-import { ErrorAlert } from "@components/shared.tsx";
+import { ErrorAlert } from "@components/error-alert.tsx";
 import { envConfig } from "@config";
 import { cors } from "@elysiajs/cors";
 import { html } from "@elysiajs/html";

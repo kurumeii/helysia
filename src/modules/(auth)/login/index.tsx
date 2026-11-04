@@ -1,4 +1,4 @@
-import { ErrorAlert } from "@components/shared.tsx";
+import { ErrorAlert } from "@components/error-alert.tsx";
 import { authPlugin } from "@plugin";
 import { Elysia, t } from "elysia";
 import { HX, ROUTES } from "@/shared/routes.ts";

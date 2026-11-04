@@ -1,9 +1,8 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx";
+import { Layout } from "@components/layout.tsx";
 import { ROUTES } from "@/shared/routes.ts";
 
 export const HomePage = ({ user }: { user: { username: string } | null }) => (
-	<BaseHtml title="Helysia">
-		<Navbar user={user} />
+	<Layout user={user} title="Helysia">
 		<main class="hero min-h-[70vh]">
 			<div class="hero-content text-center">
 				<div class="max-w-md">
@@ -24,5 +23,5 @@ export const HomePage = ({ user }: { user: { username: string } | null }) => (
 				</div>
 			</div>
 		</main>
-	</BaseHtml>
+	</Layout>
 );

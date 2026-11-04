@@ -1,6 +1,4 @@
-import { ROUTES } from "../routes.ts";
-
-type BaseHtmlProps = {
+export type BaseHtmlProps = {
 	children: JSX.Element | JSX.Element[];
 	title?: string;
 	description?: string | string[];
@@ -46,51 +44,3 @@ export const BaseHtml = (props: BaseHtmlProps) => {
 		</html>
 	);
 };
-
-type NavbarProps = {
-	user: { username: string } | null;
-};
-
-export const Navbar = ({ user }: NavbarProps) => (
-	<nav class="navbar bg-base-100 shadow-sm">
-		<div class="flex-1">
-			<a class="btn btn-ghost text-xl" href={ROUTES.home}>
-				Helysia
-			</a>
-		</div>
-		<div class="flex flex-none items-center gap-2">
-			{user ? (
-				<>
-					<a class="btn btn-ghost" href={ROUTES.todos}>
-						Todos
-					</a>
-					<span class="text-sm" safe>
-						{user.username}
-					</span>
-					<button
-						type="button"
-						class="btn btn-outline btn-sm"
-						hx-post={ROUTES.logout}
-					>
-						Log out
-					</button>
-				</>
-			) : (
-				<>
-					<a class="btn btn-ghost" href={ROUTES.login}>
-						Log in
-					</a>
-					<a class="btn btn-primary" href={ROUTES.register}>
-						Register
-					</a>
-				</>
-			)}
-		</div>
-	</nav>
-);
-
-export const ErrorAlert = ({ children }: { children: JSX.Element }) => (
-	<div role="alert" class="alert alert-error">
-		<span>{children}</span>
-	</div>
-);
