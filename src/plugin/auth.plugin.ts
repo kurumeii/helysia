@@ -1,6 +1,7 @@
 import { envConfig } from "@config";
 import { jwt } from "@elysiajs/jwt";
 import { Elysia, t } from "elysia";
+import { HX, ROUTES } from "@/shared/routes.ts";
 
 const SESSION_COOKIE = "session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
@@ -66,11 +67,11 @@ export const authPlugin = () =>
 				if (user) {
 					return { user };
 				}
-				if (request.headers.has("hx-request")) {
-					set.headers["hx-redirect"] = "/login";
+				if (request.headers.has(HX.request)) {
+					set.headers[HX.redirect] = ROUTES.login;
 					return status(401, "Unauthorized");
 				}
-				set.headers.location = "/login";
+				set.headers.location = ROUTES.login;
 				return status(302, "");
 			},
 		});

@@ -1,4 +1,5 @@
 import { BaseHtml, Navbar } from "@components/shared.tsx";
+import { ROUTES } from "@/shared/routes.ts";
 
 export const HomePage = ({ user }: { user: { username: string } | null }) => (
 	<BaseHtml title="Helysia">
@@ -12,11 +13,11 @@ export const HomePage = ({ user }: { user: { username: string } | null }) => (
 						own todo list.
 					</p>
 					{user ? (
-						<a class="btn btn-primary" href="/todos">
+						<a class="btn btn-primary" href={ROUTES.todos}>
 							Open my todos
 						</a>
 					) : (
-						<a class="btn btn-primary" href="/register">
+						<a class="btn btn-primary" href={ROUTES.register}>
 							Get started
 						</a>
 					)}

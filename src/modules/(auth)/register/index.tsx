@@ -1,6 +1,7 @@
 import { ErrorAlert } from "@components/shared.tsx";
 import { authPlugin } from "@plugin";
 import { Elysia, t } from "elysia";
+import { HX, ROUTES } from "@/shared/routes.ts";
 import { AuthService } from "../service.ts";
 import { RegisterPage } from "./page.tsx";
 
@@ -8,7 +9,7 @@ export default new Elysia()
 	.use(authPlugin())
 	.use(AuthService)
 	.get("/", ({ user, redirect }) =>
-		user ? redirect("/todos") : <RegisterPage />,
+		user ? redirect(ROUTES.todos) : <RegisterPage />,
 	)
 	.post(
 		"/",
@@ -22,7 +23,7 @@ export default new Elysia()
 			}
 
 			await startSession(created);
-			set.headers["hx-redirect"] = "/todos";
+			set.headers[HX.redirect] = ROUTES.todos;
 			return "";
 		},
 		{

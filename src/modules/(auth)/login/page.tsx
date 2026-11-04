@@ -1,4 +1,5 @@
 import { BaseHtml, Navbar } from "@components/shared.tsx";
+import { ROUTES } from "@/shared/routes.ts";
 
 export const LoginPage = () => (
 	<BaseHtml title="Log in">
@@ -6,7 +7,7 @@ export const LoginPage = () => (
 		<main class="mx-auto max-w-sm p-4">
 			<form
 				class="card bg-base-100 shadow-md"
-				hx-post="/login"
+				hx-post={ROUTES.login}
 				hx-target="#form-error"
 			>
 				<div class="card-body">
@@ -30,7 +31,7 @@ export const LoginPage = () => (
 					<button type="submit" class="btn btn-primary">
 						Log in
 					</button>
-					<a class="link" href="/register">
+					<a class="link" href={ROUTES.register}>
 						No account? Register
 					</a>
 				</div>

@@ -1,5 +1,6 @@
 import { BaseHtml, Navbar } from "@components/shared.tsx";
 import type { Todo } from "@db";
+import { ROUTES } from "@/shared/routes.ts";
 import { TodoRow } from "./components.tsx";
 
 type TodosPageProps = {
@@ -13,7 +14,7 @@ export const TodosPage = ({ user, todos }: TodosPageProps) => (
 		<main class="mx-auto max-w-xl space-y-4 p-4">
 			<form
 				class="flex gap-2"
-				hx-post="/todos"
+				hx-post={ROUTES.todos}
 				hx-target="#todo-list"
 				hx-swap="afterbegin"
 				{...{

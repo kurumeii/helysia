@@ -1,4 +1,5 @@
 import type { Todo } from "@db";
+import { todoPath } from "@/shared/routes.ts";
 
 export const TodoRow = ({ todo }: { todo: Todo }) => (
 	<li
@@ -12,7 +13,7 @@ export const TodoRow = ({ todo }: { todo: Todo }) => (
 			class="checkbox"
 			aria-label="Done"
 			checked={todo.done}
-			hx-patch={`/todos/${todo.id}/toggle`}
+			hx-patch={todoPath(todo.id, "toggle")}
 		/>
 		<span class={todo.done ? "line-through opacity-60" : ""} safe>
 			{todo.title}
@@ -21,14 +22,14 @@ export const TodoRow = ({ todo }: { todo: Todo }) => (
 			<button
 				type="button"
 				class="btn btn-ghost btn-sm"
-				hx-get={`/todos/${todo.id}/edit`}
+				hx-get={todoPath(todo.id, "edit")}
 			>
 				Edit
 			</button>
 			<button
 				type="button"
 				class="btn btn-ghost btn-sm text-error"
-				hx-delete={`/todos/${todo.id}`}
+				hx-delete={todoPath(todo.id)}
 			>
 				Delete
 			</button>
@@ -43,7 +44,7 @@ export const TodoEditRow = ({ todo }: { todo: Todo }) => (
 		hx-target="this"
 		hx-swap="outerHTML"
 	>
-		<form class="flex w-full gap-2" hx-put={`/todos/${todo.id}`}>
+		<form class="flex w-full gap-2" hx-put={todoPath(todo.id)}>
 			<input
 				name="title"
 				value={todo.title}
@@ -56,7 +57,7 @@ export const TodoEditRow = ({ todo }: { todo: Todo }) => (
 			<button type="submit" class="btn btn-primary btn-sm">
 				Save
 			</button>
-			<button type="button" class="btn btn-sm" hx-get={`/todos/${todo.id}`}>
+			<button type="button" class="btn btn-sm" hx-get={todoPath(todo.id)}>
 				Cancel
 			</button>
 		</form>

@@ -12,6 +12,7 @@ import {
 import { Elysia } from "elysia";
 import { autoload } from "elysia-autoload";
 import { helmet } from "elysia-helmet";
+import { HX, ROUTES } from "@/shared/routes.ts";
 
 export const app = new Elysia()
 	.use(loggerPlugin())
@@ -33,7 +34,7 @@ export const app = new Elysia()
 		}),
 	)
 	.onError(({ code, request, status }) => {
-		if (code === "VALIDATION" && request.headers.has("hx-request")) {
+		if (code === "VALIDATION" && request.headers.has(HX.request)) {
 			return status(
 				422,
 				ErrorAlert({
@@ -43,3 +44,15 @@ export const app = new Elysia()
 		}
 	})
 	.listen(envConfig.PORT);
+
+const registered = new Set(
+	app.routes.map(({ path }) =>
+		path.length > 1 ? path.replace(/\/$/, "") : path,
+	),
+);
+const missing = Object.values(ROUTES).filter((path) => !registered.has(path));
+if (missing.length > 0) {
+	throw new Error(
+		`ROUTES is out of sync with src/modules. Not registered: ${missing.join(", ")}`,
+	);
+}
