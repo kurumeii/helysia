@@ -1,13 +1,13 @@
-import { staticPlugin as _staticPlugin } from "@elysiajs/static";
+import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
 
 // await Bun.$`bun build:css`
 
-export const staticPlugin = () =>
+export const staticAssetsPlugin = () =>
 	new Elysia({
 		name: "plugin.static",
 	}).use(
-		_staticPlugin({
+		staticPlugin({
 			prefix: "/static",
 		}),
 	);

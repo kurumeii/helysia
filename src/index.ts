@@ -4,7 +4,7 @@ import { envConfig } from "@config";
 import { cors } from "@elysiajs/cors";
 import { html } from "@elysiajs/html";
 import { swagger } from "@elysiajs/swagger";
-import { gracefulShutdownPlugin, staticPlugin } from "@plugin";
+import { gracefulShutdownPlugin, staticAssetsPlugin } from "@plugin";
 import { logger } from "@tqman/nice-logger";
 import { Elysia } from "elysia";
 import { autoload } from "elysia-autoload";
@@ -21,7 +21,7 @@ export const app = new Elysia()
 			contentSecurityPolicy: false,
 		}),
 	)
-	.use(staticPlugin())
+	.use(staticAssetsPlugin())
 	.use(gracefulShutdownPlugin())
 	// Every `index.ts(x)` under src/modules is a controller (see AGENTS.md).
 	// Folder names become URLs; `(group)` folders are dropped from the URL.
