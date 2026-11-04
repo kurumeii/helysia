@@ -1,12 +1,12 @@
 type BaseHtmlProps = {
-	children: JSX.Element | JSX.Element[]
-	title?: string
-	description?: string | string[]
-	meta?: string | string[]
-}
+	children: JSX.Element | JSX.Element[];
+	title?: string;
+	description?: string | string[];
+	meta?: string | string[];
+};
 
 export const BaseHtml = (props: BaseHtmlProps) => {
-	const safeChildren = props.children
+	const safeChildren = props.children;
 	return (
 		<html lang="en" data-theme="coffee">
 			<head>
@@ -43,12 +43,12 @@ export const BaseHtml = (props: BaseHtmlProps) => {
 			</head>
 			<body class="min-h-screen bg-base-200">{safeChildren}</body>
 		</html>
-	)
-}
+	);
+};
 
 type NavbarProps = {
-	user: { username: string } | null
-}
+	user: { username: string } | null;
+};
 
 export const Navbar = ({ user }: NavbarProps) => (
 	<nav class="navbar bg-base-100 shadow-sm">
@@ -86,10 +86,10 @@ export const Navbar = ({ user }: NavbarProps) => (
 			)}
 		</div>
 	</nav>
-)
+);
 
 export const ErrorAlert = ({ children }: { children: JSX.Element }) => (
 	<div role="alert" class="alert alert-error">
 		<span>{children}</span>
 	</div>
-)
+);

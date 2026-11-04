@@ -1,4 +1,4 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx"
+import { BaseHtml, Navbar } from "@components/shared.tsx";
 
 export const LoginPage = () => (
 	<BaseHtml title="Log in">
@@ -37,4 +37,4 @@ export const LoginPage = () => (
 			</form>
 		</main>
 	</BaseHtml>
-)
+);

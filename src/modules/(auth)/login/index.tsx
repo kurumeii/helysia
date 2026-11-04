@@ -1,8 +1,8 @@
-import { ErrorAlert } from "@components/shared.tsx"
-import { authPlugin } from "@plugin"
-import { Elysia, t } from "elysia"
-import { AuthService } from "../service.ts"
-import { LoginPage } from "./page.tsx"
+import { ErrorAlert } from "@components/shared.tsx";
+import { authPlugin } from "@plugin";
+import { Elysia, t } from "elysia";
+import { AuthService } from "../service.ts";
+import { LoginPage } from "./page.tsx";
 
 // Public route (guests only): signed-in users are sent to /todos.
 export default new Elysia()
@@ -12,22 +12,25 @@ export default new Elysia()
 	.post(
 		"/",
 		async ({ body, authService, set, status, startSession }) => {
-			const found = await authService.authenticate(body.username, body.password)
+			const found = await authService.authenticate(
+				body.username,
+				body.password,
+			);
 			if (!found) {
 				return status(
 					401,
-					<ErrorAlert>Invalid username or password.</ErrorAlert>
-				)
+					<ErrorAlert>Invalid username or password.</ErrorAlert>,
+				);
 			}
 
-			await startSession(found)
-			set.headers["hx-redirect"] = "/todos"
-			return ""
+			await startSession(found);
+			set.headers["hx-redirect"] = "/todos";
+			return "";
 		},
 		{
 			body: t.Object({
 				username: t.String({ minLength: 1, maxLength: 32 }),
 				password: t.String({ minLength: 1, maxLength: 128 }),
 			}),
-		}
-	)
+		},
+	);

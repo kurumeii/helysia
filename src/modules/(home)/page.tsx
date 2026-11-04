@@ -1,4 +1,4 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx"
+import { BaseHtml, Navbar } from "@components/shared.tsx";
 
 export const HomePage = ({ user }: { user: { username: string } | null }) => (
 	<BaseHtml title="Helysia">
@@ -24,4 +24,4 @@ export const HomePage = ({ user }: { user: { username: string } | null }) => (
 			</div>
 		</main>
 	</BaseHtml>
-)
+);

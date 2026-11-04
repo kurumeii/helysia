@@ -1,1 +1,1 @@
-export * from "./env.config.ts"
+export * from "./env.config.ts";

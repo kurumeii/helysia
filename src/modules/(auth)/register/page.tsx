@@ -1,4 +1,4 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx"
+import { BaseHtml, Navbar } from "@components/shared.tsx";
 
 export const RegisterPage = () => (
 	<BaseHtml title="Register">
@@ -40,4 +40,4 @@ export const RegisterPage = () => (
 			</form>
 		</main>
 	</BaseHtml>
-)
+);

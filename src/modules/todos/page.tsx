@@ -1,11 +1,11 @@
-import { BaseHtml, Navbar } from "@components/shared.tsx"
-import type { Todo } from "@db"
-import { TodoRow } from "./components.tsx"
+import { BaseHtml, Navbar } from "@components/shared.tsx";
+import type { Todo } from "@db";
+import { TodoRow } from "./components.tsx";
 
 type TodosPageProps = {
-	user: { username: string }
-	todos: Todo[]
-}
+	user: { username: string };
+	todos: Todo[];
+};
 
 export const TodosPage = ({ user, todos }: TodosPageProps) => (
 	<BaseHtml title="Todos">
@@ -38,4 +38,4 @@ export const TodosPage = ({ user, todos }: TodosPageProps) => (
 			</ul>
 		</main>
 	</BaseHtml>
-)
+);

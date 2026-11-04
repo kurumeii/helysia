@@ -1,5 +1,5 @@
-import { index, pgTable } from "drizzle-orm/pg-core"
-import { users } from "./user.schema.ts"
+import { index, pgTable } from "drizzle-orm/pg-core";
+import { users } from "./user.schema.ts";
 
 export const todos = pgTable(
 	"todos",
@@ -13,7 +13,7 @@ export const todos = pgTable(
 		done: b.boolean("done").notNull().default(false),
 		created_at: b.timestamp("created_at").defaultNow().notNull(),
 	}),
-	(t) => [index("todos_user_id_idx").on(t.user_id)]
-)
+	(t) => [index("todos_user_id_idx").on(t.user_id)],
+);
 
-export type Todo = typeof todos.$inferSelect
+export type Todo = typeof todos.$inferSelect;

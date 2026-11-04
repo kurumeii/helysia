@@ -1,14 +1,14 @@
-import { envConfig } from "@config"
-import { jwt } from "@elysiajs/jwt"
-import { Elysia, t } from "elysia"
+import { envConfig } from "@config";
+import { jwt } from "@elysiajs/jwt";
+import { Elysia, t } from "elysia";
 
-const SESSION_COOKIE = "session"
-const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7
+const SESSION_COOKIE = "session";
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 export type SessionUser = {
-	id: number
-	username: string
-}
+	id: number;
+	username: string;
+};
 
 /**
  * Cookie-based JWT authentication.
@@ -31,16 +31,16 @@ export const authPlugin = () =>
 					userId: t.String(),
 					username: t.String(),
 				}),
-			})
+			}),
 		)
 		.derive({ as: "global" }, async ({ jwt, cookie }) => {
-			const session = cookie[SESSION_COOKIE]
-			const token = session?.value
+			const session = cookie[SESSION_COOKIE];
+			const token = session?.value;
 			const payload =
-				typeof token === "string" ? await jwt.verify(token) : false
+				typeof token === "string" ? await jwt.verify(token) : false;
 			const user: SessionUser | null = payload
 				? { id: Number(payload.userId), username: payload.username }
-				: null
+				: null;
 
 			return {
 				user,
@@ -56,7 +56,7 @@ export const authPlugin = () =>
 						secure: envConfig.NODE_ENV === "production",
 						path: "/",
 						maxAge: SESSION_TTL_SECONDS,
-					})
+					});
 				},
 				endSession: () => {
 					session?.set({
@@ -66,10 +66,10 @@ export const authPlugin = () =>
 						secure: envConfig.NODE_ENV === "production",
 						path: "/",
 						maxAge: 0,
-					})
+					});
 				},
-			}
-		})
+			};
+		});
 
 /**
  * Protects every route registered after `.use(requireAuth())` in the same
@@ -82,13 +82,13 @@ export const requireAuth = () =>
 		.use(authPlugin())
 		.resolve({ as: "scoped" }, ({ user, request, set, status }) => {
 			if (user) {
-				return { user }
+				return { user };
 			}
 			// htmx requests: tell the browser to navigate. Pages: plain redirect.
 			if (request.headers.has("hx-request")) {
-				set.headers["hx-redirect"] = "/login"
-				return status(401, "Unauthorized")
+				set.headers["hx-redirect"] = "/login";
+				return status(401, "Unauthorized");
 			}
-			set.headers.location = "/login"
-			return status(302, "")
-		})
+			set.headers.location = "/login";
+			return status(302, "");
+		});
