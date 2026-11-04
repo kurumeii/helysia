@@ -1,60 +1,249 @@
-# This is a starter template for Elysia and Htmx
+# Helysia
 
-## Core concepts
+Starter template for a server-rendered web app: [Bun](https://bun.sh) + [Elysia](https://elysiajs.com) on the backend, JSX templates ([`@kitajs/html`](https://html.kitajs.org)) with [htmx](https://htmx.org) for interactivity, [Drizzle ORM](https://orm.drizzle.team) on Postgres, and Tailwind 4 + daisyUI 5 for styling.
 
-Backend will be using [Elysia](https://elysiajs.com/) with bunch of useful plugins. Frontend will be server rendered with the help of [htmx](http://htmx.org)
+It ships with a working demo (register, log in, per-user todo CRUD, public and protected routes) that you can copy from or delete.
 
-## How to use
-
-1. Clone the repo
+## Quick start
 
 ```bash
 tiged kurumeii/helysia <your-project-name>
-```
-
-2. Install dependencies
-
-```bash
+cd <your-project-name>
 bun install
+cp .env.example .env            # then set JWT_SECRET, e.g. openssl rand -base64 32
+docker compose -f docker-compose.dev.yml up -d   # local Postgres on :5432
+bun migrate                     # apply migrations
+bun dev                         # http://localhost:3000; builds CSS, then restarts on code changes and rebuilds CSS on class changes
 ```
 
-3. Copy `.env.example` to `.env` and fill in the values
+| Command | What it does |
+| --- | --- |
+| `bun dev` | Runs `dev:server` (`bun --watch`, restarts the process on code changes) and `dev:css` (Tailwind in watch mode, rewrites `public/global.css` when classes change) in parallel. Refresh the browser to see changes |
+| `bun build:css` | One-off CSS build, for CI or production |
+| `bun generate` | Create a migration after editing `src/database/*.schema.ts` |
+| `bun migrate` | Apply migrations |
+| `bun studio` | Open Drizzle Studio |
+| `bun run lint` | Biome (with `--write`) and cspell on `src` |
+| `bun x tsc --noEmit` | Type check |
 
-```bash
-cp .env.example .env
--- Use open ssl rand -base 64
-JWT_SECRET = 
+There is no test suite. Swagger is served at `/swagger`.
+
+## How the codebase works
+
+### Project layout
+
+```
+src/
+  index.ts                 builds the app: plugins, then the autoloaded modules
+  config/                  env.config.ts (validated env vars), drizzle.config.ts
+  database/                client.ts, *.schema.ts (tables), index.ts (schema re-exports), drizzle/ (migrations)
+  plugin/                  cross-cutting plugins (auth, db, logger, autoload, shutdown, static)
+  shared/
+    routes.ts              ROUTES, todoPath, HX: every URL and htmx header name
+    components/            Layout, BaseHtml, Navbar, ErrorAlert (one component per file)
+    style/global.css       Tailwind + daisyUI entry
+  modules/                 one folder per feature (see below)
+public/                    compiled CSS and htmx, served at /static
 ```
 
-4. Start Postgres, apply migrations, build CSS and run
+### Features are folders
 
-```bash
-docker compose -f docker-compose.dev.yml up -d
-bun migrate
-bun build:css
-bun dev
+Every folder under `src/modules/` is a feature. `autoloadPlugin` (a wrapper around `elysia-autoload`) mounts every `index.ts(x)` it finds, and **the folder name is the URL**: `todos/index.tsx` serves `/todos`. A folder in parentheses, like `(auth)` or `(home)`, is only for grouping and is left out of the URL, so `(home)/index.tsx` is `/` and `(auth)/login/index.tsx` is `/login`. There is no registration step.
+
+Inside a feature folder:
+
+| File | Role |
+| --- | --- |
+| `index.tsx` | Controller. HTTP only: routes, validation, cookies, status codes. A default-exported `new Elysia()`; routes are relative to the folder URL (`.get("/")`) |
+| `service.ts` | Business logic and queries. Plain values in and out, no HTTP |
+| `page.tsx` | Full page, a pure component: props in, HTML out, no Elysia or db imports |
+| `components.tsx` | Fragments that htmx swaps in |
+
+Only `index.ts(x)` files are loaded as routes. The other files are never mounted.
+
+### What happens on a request
+
+1. `src/index.ts` composes the app: `loggerPlugin`, swagger, cors, html, etag, helmet, static files, graceful shutdown, then `autoloadPlugin`.
+2. `authPlugin` reads the `session` cookie and gives every route `user` (`{ id, username }` or `null`), plus `startSession(user)` and `endSession()`.
+3. The controller validates input, calls its service, and returns JSX. `@elysiajs/html` sends it as `text/html`.
+4. Services get `db` through `dbPlugin`, so handlers never pass it around.
+5. `loggerPlugin` prints one line per response, such as `GET /todos 200 12.3ms`.
+
+### Pages and htmx
+
+- A **page** is rendered on navigation and wraps its content in `<Layout user={user} title="...">`, which adds `<head>`, the navbar and the body.
+- A **fragment** is a small piece of HTML a handler returns to htmx, for example one todo row. Handlers return JSX directly for both.
+- Navigation after a form submit uses a response header: `set.headers[HX.redirect] = ROUTES.todos`.
+- `BaseHtml` configures htmx to swap 4xx and 5xx responses, so forms can show server errors. `onError` in `src/index.ts` turns htmx validation errors into an alert.
+- User-provided text inside an element needs the `safe` attribute (`<span safe>{title}</span>`), so it is escaped.
+
+### Auth
+
+`src/plugin/auth.plugin.ts` signs a JWT into an `httpOnly`, `SameSite=Lax` cookie (7 days). The token is stateless, so it cannot be revoked before it expires.
+
+- **Public route** (guests allowed): `.use(authPlugin())`. `user` may be `null`.
+- **Protected route**: `.use(authPlugin()).guard({ auth: true })`. Guests are redirected to `/login` (htmx requests get `401` plus `HX-Redirect`), and `user` is non-null in every handler after the guard. `auth: true` also works on a single route.
+
+### Database
+
+`src/database/client.ts` creates one Drizzle client, and `src/plugin/db.plugin.ts` shares it, so the app has a single connection pool that is closed on shutdown. Tables live in `src/database/*.schema.ts` and are re-exported from `src/database/index.ts`, which is the schema drizzle-kit reads.
+
+**Ownership rule:** every query on a per-user table filters by `user_id`, so users can never read or change each other's rows. Keep that on any new per-user table (`todos/service.ts` has an `owned()` helper for it).
+
+### Logging and shutdown
+
+`loggerPlugin` prints a colored startup line, one line per response, and error stack traces (404s are skipped). `gracefulShutdownPlugin` stops the server on `SIGINT` or `SIGTERM`, forces exit after 10 seconds, and exits with code 1 on an uncaught exception.
+
+### URLs and headers are constants
+
+Links, `hx-*` URLs and redirects use `ROUTES`, `todoPath` and `HX` from `src/shared/routes.ts`, never string literals. Startup fails if a `ROUTES` entry has no matching route, so renaming a folder cannot leave dead links.
+
+### Styles
+
+Tailwind 4 and daisyUI are compiled by `bun build:css` into `public/global.css` and served from `/static`. There are no CDN links. To upgrade daisyUI, run `bun update daisyui`, then `bun build:css`, and commit `bun.lock` and `public/global.css`.
+
+## Add a new feature
+
+The steps below add a per-user "notes" feature at `/notes`. Copy `src/modules/todos` when you need more (create, update, delete, htmx fragments).
+
+**1. Add the table.** Create `src/database/note.schema.ts`:
+
+```ts
+import { index, pgTable } from "drizzle-orm/pg-core";
+import { users } from "./user.schema.ts";
+
+export const notes = pgTable(
+	"notes",
+	(b) => ({
+		id: b.integer("id").primaryKey().generatedByDefaultAsIdentity(),
+		user_id: b
+			.integer("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		body: b.varchar("body", { length: 500 }).notNull(),
+	}),
+	(t) => [index("notes_user_id_idx").on(t.user_id)],
+);
+
+export type Note = typeof notes.$inferSelect;
 ```
 
-## Demo included
+Re-export it in `src/database/index.ts` (`export * from "./note.schema.ts";`), then run `bun generate` and `bun migrate`.
 
-| Route                              | Access    | Shows                                          |
-| ---------------------------------- | --------- | ---------------------------------------------- |
-| `GET /`                            | public    | Landing page, navbar reacts to sign-in state   |
-| `GET/POST /register`               | guests    | Insert a user, hash the password, start a session |
-| `GET/POST /login`                  | guests    | Look up a user, verify the hash, start a session |
-| `POST /logout`                     | any       | End the session                                |
-| `GET /todos`                       | protected | List the signed-in user's todos                |
-| `POST /todos`                      | protected | Create                                         |
-| `GET /todos/:id`, `/:id/edit`      | protected | Read one row (display and edit form)           |
-| `PUT /todos/:id`, `PATCH /:id/toggle` | protected | Update                                      |
-| `DELETE /todos/:id`                | protected | Delete                                         |
+**2. Add the URL.** In `src/shared/routes.ts`, add `notes: "/notes"` to `ROUTES`.
 
-How it fits together:
+**3. Add the service.** `src/modules/notes/service.ts`:
 
-- **Session**: `src/plugin/auth.plugin.ts` signs a JWT into an `httpOnly`, `SameSite=Lax` cookie (7 days). Every route gets `user` (or `null`). The token is stateless, so it cannot be revoked before it expires.
-- **Protect routes**: `.use(authPlugin()).guard({ auth: true })` (from `@plugin`) rejects guests and makes `user` non-null. Pages redirect to `/login`, htmx requests get `401` plus `HX-Redirect`. See `src/modules/todos/index.tsx`.
-- **Database**: `src/database/client.ts` creates the client and `src/plugin/db.plugin.ts` shares it. Tables live in `src/database/`.
-- **Ownership**: every todo query filters by `user_id`, so users cannot see or change each other's rows.
-- **Features are folders**: each folder in `src/modules/` holds a controller (`index.tsx`), a service (`service.ts`) and its markup (`page.tsx`, `components.tsx`). `elysia-autoload` mounts every `index.tsx`, and the folder name is the URL (`todos/` is `/todos`; a `(group)` folder is left out of the URL). Add a feature by adding a folder.
-- **Layers**: the controller handles HTTP and calls the service (business logic and queries, no HTTP). Pages are pure components with no Elysia or database imports. Shared markup is in `src/shared/components/`.
-- **Production**: set `NODE_ENV=production` so the session cookie gets the `Secure` flag, which needs HTTPS.
+```ts
+import { notes } from "@db";
+import { dbPlugin } from "@plugin";
+import { desc, eq } from "drizzle-orm";
+import { Elysia } from "elysia";
+import type { Db } from "@/database/client.ts";
+
+export const createNoteService = (db: Db) => ({
+	list: (userId: number) =>
+		db
+			.select()
+			.from(notes)
+			.where(eq(notes.user_id, userId))
+			.orderBy(desc(notes.id)),
+});
+
+export const NoteService = new Elysia({ name: "Note.Service" })
+	.use(dbPlugin)
+	.derive({ as: "scoped" }, ({ db }) => ({
+		noteService: createNoteService(db),
+	}));
+```
+
+`createNoteService(db)` can be tested with a fake `db`. `NoteService` makes `noteService` available to any controller that `.use`s it.
+
+**4. Add the page.** `src/modules/notes/page.tsx`:
+
+```tsx
+import { Layout } from "@components/layout.tsx";
+import type { Note } from "@db";
+
+type NotesPageProps = {
+	user: { username: string };
+	notes: Note[];
+};
+
+export const NotesPage = ({ user, notes }: NotesPageProps) => (
+	<Layout user={user} title="Notes">
+		<main class="mx-auto max-w-xl p-4">
+			<ul>
+				{notes.map((note) => (
+					<li safe>{note.body}</li>
+				))}
+			</ul>
+		</main>
+	</Layout>
+);
+```
+
+**5. Add the controller.** `src/modules/notes/index.tsx`:
+
+```tsx
+import { authPlugin } from "@plugin";
+import { Elysia } from "elysia";
+import { NotesPage } from "./page.tsx";
+import { NoteService } from "./service.ts";
+
+export default new Elysia()
+	.use(authPlugin())
+	.use(NoteService)
+	.guard({ auth: true })
+	.get("/", async ({ user, noteService }) => (
+		<NotesPage user={user} notes={await noteService.list(user.id)} />
+	));
+```
+
+Drop `.guard({ auth: true })` for a public route. Restart `bun dev`, and `/notes` is live with no registration step.
+
+**6. Link to it.** Add `<a href={ROUTES.notes}>` to `src/shared/components/navbar.tsx`.
+
+### Routes with input
+
+Validate with Elysia's `t` and return a fragment for htmx (from `todos/index.tsx`):
+
+```tsx
+.put(
+	"/:id",
+	async ({ user, todoService, params, body, status }) => {
+		const row = await todoService.rename(user.id, params.id, body.title);
+		return row ? <TodoRow todo={row} /> : status(404, "Todo not found");
+	},
+	{
+		params: t.Object({ id: t.Numeric() }),
+		body: t.Object({ title: t.String({ minLength: 1, maxLength: 200 }) }),
+	},
+)
+```
+
+## Conventions
+
+- **Method chaining:** Elysia needs it to keep types. Build controllers and plugins as one chain, never `app.get(...)` on a separate line.
+- **Imports keep the `.ts`/`.tsx` extension.** Aliases: `@config`, `@plugin`, `@db`, `@components/*`, `@/*`. Files inside a module import each other relatively.
+- **Plugins** are named (`new Elysia({ name: "plugin.x" })`), live in `src/plugin/`, and are re-exported from `src/plugin/index.ts`.
+- **Formatting:** Biome (tabs, double quotes), and cspell checks `src`. Add unknown words to `cspell/project-words.txt`. Run `bun run lint` before committing.
+
+## Demo routes
+
+| Route | Access | Shows |
+| --- | --- | --- |
+| `GET /` | public | Landing page, navbar reacts to sign-in state |
+| `GET/POST /register` | guests | Insert a user, hash the password, start a session |
+| `GET/POST /login` | guests | Look up a user, verify the hash, start a session |
+| `POST /logout` | any | End the session (POST so another site cannot log the user out) |
+| `GET /todos` | protected | List the signed-in user's todos |
+| `POST /todos` | protected | Create |
+| `GET /todos/:id`, `/:id/edit` | protected | Read one row (display and edit form) |
+| `PUT /todos/:id`, `PATCH /todos/:id/toggle` | protected | Update |
+| `DELETE /todos/:id` | protected | Delete |
+
+## Production
+
+- Set `NODE_ENV=production` so the session cookie gets the `Secure` flag, which needs HTTPS.
+- The `Dockerfile` and `docker-compose.yml` are stale: they reference `./drizzle` and `./drizzle.config.ts` at the repo root (both now live under `src/`) and do not pass `DATABASE_URL` or `JWT_SECRET` to the app. Fix them before deploying.
