@@ -1,4 +1,4 @@
-import { users } from "@db";
+import { userSchemas, users } from "@db";
 import { dbPlugin } from "@plugin";
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
@@ -7,6 +7,10 @@ const DUMMY_HASH = await Bun.password.hash("not-a-real-password");
 
 export const AuthService = new Elysia({ name: "Auth.Service" })
 	.use(dbPlugin)
+	.model({
+		"auth.login": userSchemas.login,
+		"auth.register": userSchemas.register,
+	})
 	.derive({ as: "scoped" }, ({ db }) => ({
 		authenticateUser: async (username: string, password: string) => {
 			const [row] = await db

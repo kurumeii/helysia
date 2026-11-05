@@ -1,4 +1,6 @@
 import { index, pgTable } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-typebox";
+import { t } from "elysia";
 import { users } from "./user.schema.ts";
 
 export const todos = pgTable(
@@ -20,3 +22,16 @@ export const todos = pgTable(
 );
 
 export type Todo = typeof todos.$inferSelect;
+
+const select = createSelectSchema(todos);
+const insert = createInsertSchema(todos, {
+	title: t.String({ minLength: 1, maxLength: 200 }),
+});
+
+export const todoSchemas = {
+	select,
+	insert,
+	params: t.Pick(select, ["id"]),
+	query: t.Object({ after: select.properties.id }),
+	body: t.Pick(insert, ["title"]),
+};

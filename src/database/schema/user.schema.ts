@@ -4,6 +4,7 @@ import {
 	createSelectSchema,
 	createUpdateSchema,
 } from "drizzle-typebox";
+import { t } from "elysia";
 
 export const users = pgTable("users", (b) => ({
 	id: b
@@ -20,4 +21,18 @@ export const userSchemas = {
 	create: createInsertSchema(users),
 	select: createSelectSchema(users),
 	update: createUpdateSchema(users),
+	register: t.Pick(
+		createInsertSchema(users, {
+			username: t.String({ pattern: "^[A-Za-z0-9_]{3,32}$" }),
+			password: t.String({ minLength: 8, maxLength: 128 }),
+		}),
+		["username", "password"],
+	),
+	login: t.Pick(
+		createInsertSchema(users, {
+			username: t.String({ minLength: 1, maxLength: 32 }),
+			password: t.String({ minLength: 1, maxLength: 128 }),
+		}),
+		["username", "password"],
+	),
 };

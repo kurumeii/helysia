@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { createEnv } from "@config";
-import { sql } from "drizzle-orm";
+import { todos } from "@db";
 import { createDb } from "@/database/client.ts";
 
 const unreachable = {
@@ -12,8 +12,8 @@ describe("createDb", () => {
 	test("connects with the configured DATABASE_URL and answers a query", async () => {
 		const db = createDb(createEnv());
 		try {
-			const rows = await db.execute(sql`select 1 as ok`);
-			expect(rows).toEqual([{ ok: 1 }]);
+			const rows = await db.select().from(todos).limit(1);
+			expect(rows.length).toBeLessThanOrEqual(1);
 		} finally {
 			await db.$client.close();
 		}
@@ -23,7 +23,7 @@ describe("createDb", () => {
 		const db = createDb(unreachable);
 		try {
 			await expect(
-				Promise.resolve(db.execute(sql`select 1`)),
+				Promise.resolve(db.select().from(todos).limit(1)),
 			).rejects.toThrow();
 		} finally {
 			await db.$client.close();

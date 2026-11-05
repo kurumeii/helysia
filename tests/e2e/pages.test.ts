@@ -12,7 +12,9 @@ describe("home", () => {
 		const html = await res.text();
 		expect(html).toContain(`href="${ROUTES.login}"`);
 		expect(html).toContain(`href="${ROUTES.register}"`);
+		expect(html).toContain("Get started");
 		expect(html).not.toContain(`hx-post="${ROUTES.logout}"`);
+		expect(html).not.toContain(`href="${ROUTES.todos}"`);
 	});
 
 	test("users see their name and a log out button", async () => {
@@ -22,6 +24,8 @@ describe("home", () => {
 		const html = await res.text();
 		expect(html).toContain(username);
 		expect(html).toContain(`hx-post="${ROUTES.logout}"`);
+		expect(html).toContain("Open my todos");
+		expect(html).not.toContain("Get started");
 	});
 });
 

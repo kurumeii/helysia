@@ -1,12 +1,8 @@
 import { authPlugin } from "@plugin";
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { TodoEditRow, TodoRow, TodoRows } from "./components.tsx";
 import { TodosPage } from "./page.tsx";
 import { TodoService } from "./service.ts";
-
-const params = t.Object({ id: t.String({ format: "uuid" }) });
-const query = t.Object({ after: t.String({ format: "uuid" }) });
-const body = t.Object({ title: t.String({ minLength: 1, maxLength: 200 }) });
 
 export default new Elysia()
 	.use(authPlugin())
@@ -22,7 +18,7 @@ export default new Elysia()
 			const { items, next } = await listTodos(user.id, query.after);
 			return <TodoRows todos={items} next={next} />;
 		},
-		{ query },
+		{ query: "todo.query" },
 	)
 	.post(
 		"/",
@@ -30,35 +26,35 @@ export default new Elysia()
 			const row = await createTodo(user.id, body.title);
 			return row ? <TodoRow todo={row} /> : "";
 		},
-		{ body },
+		{ body: "todo.body" },
 	)
 	.get(
 		"/:id",
 		async ({ user, getTodo, params }) => (
 			<TodoRow todo={await getTodo(user.id, params.id)} />
 		),
-		{ params },
+		{ params: "todo.params" },
 	)
 	.get(
 		"/:id/edit",
 		async ({ user, getTodo, params }) => (
 			<TodoEditRow todo={await getTodo(user.id, params.id)} />
 		),
-		{ params },
+		{ params: "todo.params" },
 	)
 	.put(
 		"/:id",
 		async ({ user, renameTodo, params, body }) => (
 			<TodoRow todo={await renameTodo(user.id, params.id, body.title)} />
 		),
-		{ params, body },
+		{ params: "todo.params", body: "todo.body" },
 	)
 	.patch(
 		"/:id/toggle",
 		async ({ user, toggleTodo, params }) => (
 			<TodoRow todo={await toggleTodo(user.id, params.id)} />
 		),
-		{ params },
+		{ params: "todo.params" },
 	)
 	.delete(
 		"/:id",
@@ -66,5 +62,5 @@ export default new Elysia()
 			await removeTodo(user.id, params.id);
 			return "";
 		},
-		{ params },
+		{ params: "todo.params" },
 	);

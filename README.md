@@ -22,7 +22,7 @@ bun dev                         # http://localhost:3000; builds CSS, then restar
 | --- | --- |
 | `bun dev` | Runs `dev:server` (`bun --watch`, restarts the process on code changes) and `dev:css` (Tailwind in watch mode, rewrites `public/global.css` when classes change) in parallel. Refresh the browser to see changes |
 | `bun build:css` | One-off CSS build, for CI or production |
-| `bun generate` | Create a migration after editing `src/database/*.schema.ts` |
+| `bun generate` | Create a migration after editing `src/database/schema/*.schema.ts` |
 | `bun migrate` | Apply migrations |
 | `bun studio` | Open Drizzle Studio |
 | `bun run lint` | Biome (with `--write`) and cspell on `src` |
@@ -38,7 +38,7 @@ There is no test suite. Swagger is served at `/swagger`.
 src/
   index.ts                 builds the app: plugins, then the autoloaded modules
   config/                  env.config.ts (validated env vars), drizzle.config.ts
-  database/                client.ts, *.schema.ts (tables), index.ts (schema re-exports), drizzle/ (migrations)
+  database/                client.ts, schema/*.schema.ts (tables), index.ts (schema re-exports), drizzle/ (migrations)
   plugin/                  cross-cutting plugins (auth, db, logger, autoload, shutdown, static)
   shared/
     routes.ts              ROUTES, todoPath, HX: every URL and htmx header name
@@ -88,7 +88,7 @@ Only `index.ts(x)` files are loaded as routes. The other files are never mounted
 
 ### Database
 
-`src/database/client.ts` creates one Drizzle client, and `src/plugin/db.plugin.ts` shares it, so the app has a single connection pool that is closed on shutdown. Tables live in `src/database/*.schema.ts` and are re-exported from `src/database/index.ts`, which is the schema drizzle-kit reads.
+`src/database/client.ts` creates one Drizzle client, and `src/plugin/db.plugin.ts` shares it, so the app has a single connection pool that is closed on shutdown. Tables live in `src/database/schema/*.schema.ts` and are re-exported from `src/database/index.ts`, which is the schema drizzle-kit reads.
 
 **Ownership rule:** every query on a per-user table filters by `user_id`, so users can never read or change each other's rows. Keep that on any new per-user table (`todos/service.ts` has an `owned()` helper for it).
 
@@ -108,7 +108,7 @@ Tailwind 4 and daisyUI are compiled by `bun build:css` into `public/global.css` 
 
 The steps below add a per-user "notes" feature at `/notes`. Copy `src/modules/todos` when you need more (create, update, delete, htmx fragments).
 
-**1. Add the table.** Create `src/database/note.schema.ts`:
+**1. Add the table.** Create `src/database/schema/note.schema.ts`:
 
 ```ts
 import { index, pgTable } from "drizzle-orm/pg-core";
@@ -130,7 +130,7 @@ export const notes = pgTable(
 export type Note = typeof notes.$inferSelect;
 ```
 
-Re-export it in `src/database/index.ts` (`export * from "./note.schema.ts";`), then run `bun generate` and `bun migrate`.
+Re-export it in `src/database/index.ts` (`export * from "./schema/note.schema.ts";`), then run `bun generate` and `bun migrate`.
 
 **2. Add the URL.** In `src/shared/routes.ts`, add `notes: "/notes"` to `ROUTES`.
 

@@ -1,6 +1,6 @@
 import { ErrorAlert } from "@components/error-alert.tsx";
 import { authPlugin } from "@plugin";
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { HX, ROUTES } from "@/shared/routes.ts";
 import { AuthService } from "../service.ts";
 import { LoginPage } from "./page.tsx";
@@ -26,10 +26,5 @@ export default new Elysia()
 			set.headers[HX.redirect] = ROUTES.todos;
 			return "";
 		},
-		{
-			body: t.Object({
-				username: t.String({ minLength: 1, maxLength: 32 }),
-				password: t.String({ minLength: 1, maxLength: 128 }),
-			}),
-		},
+		{ body: "auth.login" },
 	);

@@ -1,6 +1,6 @@
-import { todos } from "@db";
+import { todoSchemas, todos } from "@db";
 import { dbPlugin } from "@plugin";
-import { and, desc, eq, lt, sql } from "drizzle-orm";
+import { and, desc, eq, lt, not } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { ResourceNotFoundError } from "@/shared/errors.ts";
 
@@ -16,6 +16,11 @@ export const PAGE_SIZE = 25;
 
 export const TodoService = new Elysia({ name: "Todo.Service" })
 	.use(dbPlugin)
+	.model({
+		"todo.params": todoSchemas.params,
+		"todo.query": todoSchemas.query,
+		"todo.body": todoSchemas.body,
+	})
 	.derive({ as: "scoped" }, ({ db }) => ({
 		listTodos: async (userId: string, after?: string, limit = PAGE_SIZE) => {
 			const rows = await db
@@ -60,7 +65,7 @@ export const TodoService = new Elysia({ name: "Todo.Service" })
 		toggleTodo: async (userId: string, id: string) => {
 			const [row] = await db
 				.update(todos)
-				.set({ done: sql`not ${todos.done}` })
+				.set({ done: not(todos.done) })
 				.where(owned(userId, id))
 				.returning();
 			return found(row);

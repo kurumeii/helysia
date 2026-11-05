@@ -1,2 +1,2 @@
-export * from "./todo.schema.ts";
-export * from "./user.schema.ts";
+export * from "./schema/todo.schema.ts";
+export * from "./schema/user.schema.ts";
