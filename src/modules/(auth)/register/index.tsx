@@ -13,8 +13,8 @@ export default new Elysia()
 	)
 	.post(
 		"/",
-		async ({ body, authService, set, status, startSession }) => {
-			const created = await authService.register(body.username, body.password);
+		async ({ body, registerUser, set, status, startSession }) => {
+			const created = await registerUser(body.username, body.password);
 			if (!created) {
 				return status(
 					409,

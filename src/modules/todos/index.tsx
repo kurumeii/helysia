@@ -12,60 +12,58 @@ export default new Elysia()
 	.use(authPlugin())
 	.use(TodoService)
 	.guard({ auth: true })
-	.get("/", async ({ user, todoService }) => {
-		const { items, next } = await todoService.list(user.id);
+	.get("/", async ({ user, listTodos }) => {
+		const { items, next } = await listTodos(user.id);
 		return <TodosPage user={user} todos={items} next={next} />;
 	})
 	.get(
 		"/more",
-		async ({ user, todoService, query }) => {
-			const { items, next } = await todoService.list(user.id, query.after);
+		async ({ user, listTodos, query }) => {
+			const { items, next } = await listTodos(user.id, query.after);
 			return <TodoRows todos={items} next={next} />;
 		},
 		{ query },
 	)
 	.post(
 		"/",
-		async ({ user, todoService, body }) => {
-			const row = await todoService.create(user.id, body.title);
+		async ({ user, createTodo, body }) => {
+			const row = await createTodo(user.id, body.title);
 			return row ? <TodoRow todo={row} /> : "";
 		},
 		{ body },
 	)
 	.get(
 		"/:id",
-		async ({ user, todoService, params }) => (
-			<TodoRow todo={await todoService.get(user.id, params.id)} />
+		async ({ user, getTodo, params }) => (
+			<TodoRow todo={await getTodo(user.id, params.id)} />
 		),
 		{ params },
 	)
 	.get(
 		"/:id/edit",
-		async ({ user, todoService, params }) => (
-			<TodoEditRow todo={await todoService.get(user.id, params.id)} />
+		async ({ user, getTodo, params }) => (
+			<TodoEditRow todo={await getTodo(user.id, params.id)} />
 		),
 		{ params },
 	)
 	.put(
 		"/:id",
-		async ({ user, todoService, params, body }) => (
-			<TodoRow
-				todo={await todoService.rename(user.id, params.id, body.title)}
-			/>
+		async ({ user, renameTodo, params, body }) => (
+			<TodoRow todo={await renameTodo(user.id, params.id, body.title)} />
 		),
 		{ params, body },
 	)
 	.patch(
 		"/:id/toggle",
-		async ({ user, todoService, params }) => (
-			<TodoRow todo={await todoService.toggle(user.id, params.id)} />
+		async ({ user, toggleTodo, params }) => (
+			<TodoRow todo={await toggleTodo(user.id, params.id)} />
 		),
 		{ params },
 	)
 	.delete(
 		"/:id",
-		async ({ user, todoService, params }) => {
-			await todoService.remove(user.id, params.id);
+		async ({ user, removeTodo, params }) => {
+			await removeTodo(user.id, params.id);
 			return "";
 		},
 		{ params },

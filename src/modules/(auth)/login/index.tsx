@@ -13,11 +13,8 @@ export default new Elysia()
 	)
 	.post(
 		"/",
-		async ({ body, authService, set, status, startSession }) => {
-			const found = await authService.authenticate(
-				body.username,
-				body.password,
-			);
+		async ({ body, authenticateUser, set, status, startSession }) => {
+			const found = await authenticateUser(body.username, body.password);
 			if (!found) {
 				return status(
 					401,
