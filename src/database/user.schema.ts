@@ -6,7 +6,10 @@ import {
 } from "drizzle-typebox";
 
 export const users = pgTable("users", (b) => ({
-	id: b.integer("id").primaryKey().generatedByDefaultAsIdentity(),
+	id: b
+		.uuid("id")
+		.primaryKey()
+		.$defaultFn(() => Bun.randomUUIDv7()),
 	username: b.varchar("username").notNull().unique(),
 	password: b.varchar("password").notNull(),
 	created_at: b.timestamp("created_at").defaultNow(),

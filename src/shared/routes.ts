@@ -6,7 +6,7 @@ export const ROUTES = {
 	todos: "/todos",
 } as const;
 
-export const todoPath = (id: number, action?: "edit" | "toggle") =>
+export const todoPath = (id: string, action?: "edit" | "toggle") =>
 	action ? `${ROUTES.todos}/${id}/${action}` : `${ROUTES.todos}/${id}`;
 
 export const HX = {

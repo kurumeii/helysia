@@ -4,9 +4,12 @@ import { users } from "./user.schema.ts";
 export const todos = pgTable(
 	"todos",
 	(b) => ({
-		id: b.integer("id").primaryKey().generatedByDefaultAsIdentity(),
+		id: b
+			.uuid("id")
+			.primaryKey()
+			.$defaultFn(() => Bun.randomUUIDv7()),
 		user_id: b
-			.integer("user_id")
+			.uuid("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
 		title: b.varchar("title", { length: 200 }).notNull(),

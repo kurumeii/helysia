@@ -10,6 +10,7 @@
 		"dev:server": "bun --watch src/index.ts",
 		"dev:css": "bun run --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css -w",
 		"start": "NODE_ENV=production bun run ./src/index.ts",
+		"test": "bun test",
 		"build:css": "bun run --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css ",
 		"lint": "bun lint:code && bun lint:spell",
 		"lint:code": "biome check --write src",
@@ -17,7 +18,8 @@
 		"generate": "drizzle-kit generate --config ./src/config/drizzle.config.ts",
 		"push": "drizzle-kit push --config ./src/config/drizzle.config.ts",
 		"migrate": "drizzle-kit migrate --config ./src/config/drizzle.config.ts",
-		"studio": "drizzle-kit studio --config ./src/config/drizzle.config.ts"
+		"studio": "drizzle-kit studio --config ./src/config/drizzle.config.ts",
+		"seed": "bun run ./src/database/seed.ts"
 	},
 	"dependencies": {
 		"@bogeychan/elysia-etag": "^0.1.0",
@@ -42,6 +44,7 @@
 		"cspell": "^10.4.0",
 		"daisyui": "^5.7.50",
 		"drizzle-kit": "^0.31.11",
+		"drizzle-seed": "^0.3.1",
 		"postgres": "^4.0.0",
 		"tailwindcss": "^4.3.4",
 		"typescript": "^7.0.2"

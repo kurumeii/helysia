@@ -1,7 +1,7 @@
 {
 	"cache": { "useCache": true },
 	"version": "0.2",
-	"ignorePaths": ["README.md", "public/**", "**/drizzle/meta/**"],
+	"ignorePaths": ["README.md", "public/**", "**/drizzle/**"],
 	"language": "en, vi",
 	"dictionaryDefinitions": [
 		{

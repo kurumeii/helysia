@@ -7,7 +7,7 @@ const SESSION_COOKIE = "session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 export type SessionUser = {
-	id: number;
+	id: string;
 	username: string;
 };
 
@@ -31,7 +31,7 @@ export const authPlugin = () =>
 			const payload =
 				typeof token === "string" ? await jwt.verify(token) : false;
 			const user: SessionUser | null = payload
-				? { id: Number(payload.userId), username: payload.username }
+				? { id: payload.userId, username: payload.username }
 				: null;
 
 			return {
@@ -39,7 +39,7 @@ export const authPlugin = () =>
 				startSession: async (u: SessionUser) => {
 					session?.set({
 						value: await jwt.sign({
-							userId: String(u.id),
+							userId: u.id,
 							username: u.username,
 							exp: `${SESSION_TTL_SECONDS}s`,
 						}),

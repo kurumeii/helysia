@@ -4,7 +4,7 @@ import { TodoEditRow, TodoRow } from "./components.tsx";
 import { TodosPage } from "./page.tsx";
 import { TodoService } from "./service.ts";
 
-const params = t.Object({ id: t.Numeric() });
+const params = t.Object({ id: t.String({ format: "uuid" }) });
 const body = t.Object({ title: t.String({ minLength: 1, maxLength: 200 }) });
 
 export default new Elysia()
@@ -24,41 +24,39 @@ export default new Elysia()
 	)
 	.get(
 		"/:id",
-		async ({ user, todoService, params, status }) => {
-			const row = await todoService.get(user.id, params.id);
-			return row ? <TodoRow todo={row} /> : status(404, "Todo not found");
-		},
+		async ({ user, todoService, params }) => (
+			<TodoRow todo={await todoService.get(user.id, params.id)} />
+		),
 		{ params },
 	)
 	.get(
 		"/:id/edit",
-		async ({ user, todoService, params, status }) => {
-			const row = await todoService.get(user.id, params.id);
-			return row ? <TodoEditRow todo={row} /> : status(404, "Todo not found");
-		},
+		async ({ user, todoService, params }) => (
+			<TodoEditRow todo={await todoService.get(user.id, params.id)} />
+		),
 		{ params },
 	)
 	.put(
 		"/:id",
-		async ({ user, todoService, params, body, status }) => {
-			const row = await todoService.rename(user.id, params.id, body.title);
-			return row ? <TodoRow todo={row} /> : status(404, "Todo not found");
-		},
+		async ({ user, todoService, params, body }) => (
+			<TodoRow
+				todo={await todoService.rename(user.id, params.id, body.title)}
+			/>
+		),
 		{ params, body },
 	)
 	.patch(
 		"/:id/toggle",
-		async ({ user, todoService, params, status }) => {
-			const row = await todoService.toggle(user.id, params.id);
-			return row ? <TodoRow todo={row} /> : status(404, "Todo not found");
-		},
+		async ({ user, todoService, params }) => (
+			<TodoRow todo={await todoService.toggle(user.id, params.id)} />
+		),
 		{ params },
 	)
 	.delete(
 		"/:id",
-		async ({ user, todoService, params, status }) =>
-			(await todoService.remove(user.id, params.id))
-				? ""
-				: status(404, "Todo not found"),
+		async ({ user, todoService, params }) => {
+			await todoService.remove(user.id, params.id);
+			return "";
+		},
 		{ params },
 	);
