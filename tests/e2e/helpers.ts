@@ -1,5 +1,5 @@
 import { expect } from "bun:test";
-import { envConfig } from "@config";
+import { createEnv } from "@config";
 import { users } from "@db";
 import { jwt } from "@elysiajs/jwt";
 import { inArray } from "drizzle-orm";
@@ -41,7 +41,7 @@ export const sessionCookie = (res: Response) => {
 };
 
 export const signSessionCookie = async ({
-	secret = envConfig.JWT_SECRET,
+	secret = createEnv().JWT_SECRET,
 	exp,
 }: {
 	secret?: string;
@@ -81,7 +81,7 @@ export const registerUser = async () => {
 
 export const cleanupUsers = async () => {
 	if (createdUsernames.length === 0) return;
-	const db = createDb();
+	const db = createDb(createEnv());
 	try {
 		await db.delete(users).where(inArray(users.username, createdUsernames));
 	} finally {

@@ -6,15 +6,15 @@
 		"bun": ">=1.4.4"
 	},
 	"scripts": {
-		"dev": "bun run --parallel dev:server dev:css",
+		"dev": "bun run --parallel dev:server dev:css studio",
 		"dev:server": "bun --watch src/index.ts",
 		"dev:css": "bun run --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css -w",
 		"start": "NODE_ENV=production bun run ./src/index.ts",
 		"test": "bun test",
 		"build:css": "bun run --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css ",
 		"lint": "bun lint:code && bun lint:spell",
-		"lint:code": "biome check --write src",
-		"lint:spell": "cspell lint src",
+		"lint:code": "biome check --write src tests",
+		"lint:spell": "cspell lint src tests",
 		"generate": "drizzle-kit generate --config ./src/config/drizzle.config.ts",
 		"push": "drizzle-kit push --config ./src/config/drizzle.config.ts",
 		"migrate": "drizzle-kit migrate --config ./src/config/drizzle.config.ts",
@@ -34,7 +34,6 @@
 		"elysia": "^1.4.30",
 		"elysia-autoload": "^1.7.0",
 		"elysia-helmet": "^3.1.0",
-		"env-var": "^7.5.0",
 		"picocolors": "^1.1.1"
 	},
 	"devDependencies": {

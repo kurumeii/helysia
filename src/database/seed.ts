@@ -1,4 +1,4 @@
-import { envConfig } from "@config";
+import { createEnv } from "@config";
 import { count, eq, like } from "drizzle-orm";
 import { seed } from "drizzle-seed";
 import { createDb } from "./client.ts";
@@ -53,11 +53,13 @@ const todoCounts = Array.from(
 	(_, i) => MIN_TODOS + i,
 );
 
-if (envConfig.NODE_ENV === "production") {
+const env = createEnv();
+
+if (env.NODE_ENV === "production") {
 	throw new Error("Refusing to seed when NODE_ENV is production");
 }
 
-const db = createDb();
+const db = createDb(env);
 
 const hash = await Bun.password.hash("password123");
 

@@ -1,14 +1,14 @@
-import { envConfig } from "@config";
+import type { Env } from "@config";
 import { drizzle } from "drizzle-orm/bun-sql";
 import * as schema from "./index.ts";
 
-export const createDb = () =>
+export const createDb = (env: Pick<Env, "DATABASE_URL" | "NODE_ENV">) =>
 	drizzle({
 		connection: {
-			url: envConfig.DATABASE_URL,
+			url: env.DATABASE_URL,
 		},
 		casing: "snake_case",
-		logger: envConfig.NODE_ENV !== "production",
+		logger: env.NODE_ENV !== "production",
 		schema,
 	});
 

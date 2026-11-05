@@ -4,6 +4,7 @@ import { html } from "@elysiajs/html";
 import { swagger } from "@elysiajs/swagger";
 import {
 	autoloadPlugin,
+	envPlugin,
 	errorPlugin,
 	gracefulShutdownPlugin,
 	loggerPlugin,
@@ -13,6 +14,7 @@ import { Elysia } from "elysia";
 import { helmet } from "elysia-helmet";
 
 export default new Elysia()
+	.use(envPlugin)
 	.use(loggerPlugin())
 	.use(errorPlugin())
 	.use(swagger())

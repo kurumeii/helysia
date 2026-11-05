@@ -1,7 +1,7 @@
-import { envConfig } from "@config";
 import { jwt } from "@elysiajs/jwt";
 import { Elysia, t } from "elysia";
 import { HX, ROUTES } from "@/shared/routes.ts";
+import { envPlugin } from "./env.plugin.ts";
 
 const SESSION_COOKIE = "session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
@@ -15,17 +15,18 @@ export const authPlugin = () =>
 	new Elysia({
 		name: "plugin.auth",
 	})
+		.use(envPlugin)
 		.use(
 			jwt({
 				name: "jwt",
-				secret: envConfig.JWT_SECRET,
+				secret: envPlugin.decorator.env.JWT_SECRET,
 				schema: t.Object({
 					userId: t.String(),
 					username: t.String(),
 				}),
 			}),
 		)
-		.derive({ as: "global" }, async ({ jwt, cookie }) => {
+		.derive({ as: "global" }, async ({ jwt, cookie, env }) => {
 			const session = cookie[SESSION_COOKIE];
 			const token = session?.value;
 			const payload =
@@ -45,7 +46,7 @@ export const authPlugin = () =>
 						}),
 						httpOnly: true,
 						sameSite: "lax",
-						secure: envConfig.NODE_ENV === "production",
+						secure: env.NODE_ENV === "production",
 						path: "/",
 						maxAge: SESSION_TTL_SECONDS,
 					});
@@ -55,7 +56,7 @@ export const authPlugin = () =>
 						value: "",
 						httpOnly: true,
 						sameSite: "lax",
-						secure: envConfig.NODE_ENV === "production",
+						secure: env.NODE_ENV === "production",
 						path: "/",
 						maxAge: 0,
 					});
