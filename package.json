@@ -10,7 +10,6 @@
 		"dev:server": "bun --watch src/index.ts",
 		"dev:css": "bun run --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css -w",
 		"start": "NODE_ENV=production bun run ./src/index.ts",
-		"test": "bun test",
 		"build:css": "bun run --bun tailwindcss -i ./src/shared/style/global.css -o ./public/global.css ",
 		"lint": "bun lint:code && bun lint:spell",
 		"lint:code": "biome check --write src tests",
