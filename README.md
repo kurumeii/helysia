@@ -77,7 +77,7 @@ Only `index.ts(x)` files are loaded as routes. The other files are never mounted
 - A **fragment** is a small piece of HTML a handler returns to htmx, for example one todo row. Handlers return JSX directly for both.
 - Navigation after a form submit uses a response header: `set.headers[HX.redirect] = ROUTES.todos`.
 - `BaseHtml` configures htmx to swap 4xx and 5xx responses, so forms can show server errors. `onError` in `src/index.ts` turns htmx validation errors into an alert.
-- User-provided text inside an element needs the `safe` attribute (`<span safe>{title}</span>`), so it is escaped.
+- User-provided text inside an element needs the `safe` attribute (`<span safe>{title}</span>`), so it is escaped. Without it the text is inserted as raw HTML, and nothing in the toolchain warns you, so check it in review.
 
 ### Auth
 

@@ -41,7 +41,7 @@ There is no test suite. Swagger is served by `@elysiajs/swagger` at `/swagger`.
 ## Gotchas
 
 - `drizzle-kit` needs a Node-style driver, so `postgres` is a dev dependency even though the app itself uses Bun's built-in SQL client.
-- JSX is typed by `@kitajs/ts-html-plugin`: user-provided text in element bodies must use the `safe` attribute (e.g. `<span safe>{title}</span>`).
+- `@kitajs/html` does not escape by default: user-provided text in element bodies must use the `safe` attribute (e.g. `<span safe>{title}</span>`). Nothing enforces this (tsgo does not run the `@kitajs/ts-html-plugin` language-service plugin, so it was removed), so check it in review.
 - `@elysiajs/html` (registered in `index.ts`) detects HTML strings: controllers return JSX directly, for full pages and fragments alike (pages are served as `text/html`).
 - Elysia needs method chaining to keep types: build controllers and plugins as one chain, never `app.get(...)` on a separate line.
 - Path aliases (`tsconfig.json`): `@config`, `@plugin`, `@db`, `@components/*`, `@/*`. Imports keep the `.ts`/`.tsx` extension; files inside a module import each other relatively.
