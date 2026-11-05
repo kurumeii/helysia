@@ -36,7 +36,6 @@ export const loggerPlugin = ({
 				typeof set.status === "string"
 					? StatusMap[set.status]
 					: (set.status ?? 200);
-			// `derive` does not run for unmatched routes (404), despite the type.
 			const duration =
 				startedAt === undefined
 					? ""

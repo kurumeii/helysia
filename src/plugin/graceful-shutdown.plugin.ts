@@ -2,7 +2,6 @@ import { Elysia } from "elysia";
 import pc from "picocolors";
 
 type GracefulShutdownOptions = {
-	/** Max time to wait for in-flight requests before forcing exit. */
 	timeoutMs?: number;
 };
 
