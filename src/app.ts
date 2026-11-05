@@ -12,7 +12,7 @@ import {
 import { Elysia } from "elysia";
 import { helmet } from "elysia-helmet";
 
-export const app = new Elysia()
+export default new Elysia()
 	.use(loggerPlugin())
 	.use(errorPlugin())
 	.use(swagger())

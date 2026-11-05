@@ -62,6 +62,9 @@ export const authPlugin = () =>
 				},
 			};
 		})
+		.onAfterHandle({ as: "global" }, ({ user, set }) => {
+			if (user) set.headers["cache-control"] = "private, no-cache";
+		})
 		.macro("auth", {
 			resolve: ({ user, request, set, status }) => {
 				if (user) {

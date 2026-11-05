@@ -4,6 +4,7 @@ export const ROUTES = {
 	register: "/register",
 	logout: "/logout",
 	todos: "/todos",
+	todosMore: "/todos/more",
 } as const;
 
 export const todoPath = (id: string, action?: "edit" | "toggle") =>

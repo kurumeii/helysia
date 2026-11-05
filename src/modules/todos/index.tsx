@@ -1,19 +1,29 @@
 import { authPlugin } from "@plugin";
 import { Elysia, t } from "elysia";
-import { TodoEditRow, TodoRow } from "./components.tsx";
+import { TodoEditRow, TodoRow, TodoRows } from "./components.tsx";
 import { TodosPage } from "./page.tsx";
 import { TodoService } from "./service.ts";
 
 const params = t.Object({ id: t.String({ format: "uuid" }) });
+const query = t.Object({ after: t.String({ format: "uuid" }) });
 const body = t.Object({ title: t.String({ minLength: 1, maxLength: 200 }) });
 
 export default new Elysia()
 	.use(authPlugin())
 	.use(TodoService)
 	.guard({ auth: true })
-	.get("/", async ({ user, todoService }) => (
-		<TodosPage user={user} todos={await todoService.list(user.id)} />
-	))
+	.get("/", async ({ user, todoService }) => {
+		const { items, next } = await todoService.list(user.id);
+		return <TodosPage user={user} todos={items} next={next} />;
+	})
+	.get(
+		"/more",
+		async ({ user, todoService, query }) => {
+			const { items, next } = await todoService.list(user.id, query.after);
+			return <TodoRows todos={items} next={next} />;
+		},
+		{ query },
+	)
 	.post(
 		"/",
 		async ({ user, todoService, body }) => {

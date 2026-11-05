@@ -1,6 +1,6 @@
 import { todos } from "@db";
 import { dbPlugin } from "@plugin";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, lt, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 import type { Db } from "@/database/client.ts";
 import { ResourceNotFoundError } from "@/shared/errors.ts";
@@ -16,13 +16,26 @@ const found = <T>(row: T | undefined) => {
 	return row;
 };
 
+export const PAGE_SIZE = 25;
+
 export const createTodoService = (db: Db) => ({
-	list: (userId: string) =>
-		db
+	list: async (userId: string, after?: string, limit = PAGE_SIZE) => {
+		const rows = await db
 			.select()
 			.from(todos)
-			.where(eq(todos.user_id, userId))
-			.orderBy(desc(todos.created_at)),
+			.where(
+				after
+					? and(eq(todos.user_id, userId), lt(todos.id, after))
+					: eq(todos.user_id, userId),
+			)
+			.orderBy(desc(todos.id))
+			.limit(limit + 1);
+		const items = rows.slice(0, limit);
+		return {
+			items,
+			next: rows.length > limit ? (items.at(-1)?.id ?? null) : null,
+		};
+	},
 
 	get: async (userId: string, id: string) => {
 		const [row] = await db.select().from(todos).where(owned(userId, id));

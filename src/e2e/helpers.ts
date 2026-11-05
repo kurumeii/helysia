@@ -1,7 +1,10 @@
 import { expect } from "bun:test";
+import { envConfig } from "@config";
 import { users } from "@db";
+import { jwt } from "@elysiajs/jwt";
 import { inArray } from "drizzle-orm";
-import { app } from "@/app.ts";
+import { Elysia, t } from "elysia";
+import app from "@/app.ts";
 import { createDb } from "@/database/client.ts";
 import { HX, ROUTES } from "@/shared/routes.ts";
 
@@ -35,6 +38,28 @@ export const sessionCookie = (res: Response) => {
 		.find((cookie) => cookie.startsWith("session="));
 	if (!raw) throw new Error("response has no session cookie");
 	return raw.split(";")[0] ?? raw;
+};
+
+export const signSessionCookie = async ({
+	secret = envConfig.JWT_SECRET,
+	exp,
+}: {
+	secret?: string;
+	exp: number;
+}) => {
+	const signer = new Elysia().use(
+		jwt({
+			name: "jwt",
+			secret,
+			schema: t.Object({ userId: t.String(), username: t.String() }),
+		}),
+	);
+	const token = await signer.decorator.jwt.sign({
+		userId: crypto.randomUUID(),
+		username: "e2e_signer",
+		exp,
+	});
+	return `session=${token}`;
 };
 
 export const password = crypto.randomUUID();

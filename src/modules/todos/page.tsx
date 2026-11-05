@@ -1,14 +1,15 @@
 import { Layout } from "@components/layout.tsx";
 import type { Todo } from "@db";
 import { ROUTES } from "@/shared/routes.ts";
-import { TodoRow } from "./components.tsx";
+import { TodoRows } from "./components.tsx";
 
 type TodosPageProps = {
 	user: { username: string };
 	todos: Todo[];
+	next: string | null;
 };
 
-export const TodosPage = ({ user, todos }: TodosPageProps) => (
+export const TodosPage = ({ user, todos, next }: TodosPageProps) => (
 	<Layout user={user} title="Todos">
 		<main class="mx-auto max-w-xl space-y-4 p-4">
 			<form
@@ -32,9 +33,7 @@ export const TodosPage = ({ user, todos }: TodosPageProps) => (
 				</button>
 			</form>
 			<ul id="todo-list" class="list rounded-box bg-base-100 shadow-md">
-				{todos.map((todo) => (
-					<TodoRow todo={todo} />
-				))}
+				<TodoRows todos={todos} next={next} />
 			</ul>
 		</main>
 	</Layout>

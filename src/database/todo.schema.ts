@@ -16,7 +16,7 @@ export const todos = pgTable(
 		done: b.boolean("done").notNull().default(false),
 		created_at: b.timestamp("created_at").defaultNow().notNull(),
 	}),
-	(t) => [index("todos_user_id_idx").on(t.user_id)],
+	(t) => [index("todos_user_id_id_idx").on(t.user_id, t.id)],
 );
 
 export type Todo = typeof todos.$inferSelect;

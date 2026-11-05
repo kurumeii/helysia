@@ -1,5 +1,32 @@
 import type { Todo } from "@db";
-import { todoPath } from "@/shared/routes.ts";
+import { ROUTES, todoPath } from "@/shared/routes.ts";
+
+const TodoMoreTrigger = ({ after }: { after: string }) => (
+	<li
+		class="p-4 text-center"
+		hx-get={`${ROUTES.todosMore}?after=${after}`}
+		hx-trigger="revealed"
+		hx-swap="outerHTML"
+	>
+		<span class="loading loading-spinner" />
+		<span class="sr-only">Loading more</span>
+	</li>
+);
+
+export const TodoRows = ({
+	todos,
+	next,
+}: {
+	todos: Todo[];
+	next: string | null;
+}) => (
+	<>
+		{todos.map((todo) => (
+			<TodoRow todo={todo} />
+		))}
+		{next ? <TodoMoreTrigger after={next} /> : ""}
+	</>
+);
 
 export const TodoRow = ({ todo }: { todo: Todo }) => (
 	<li
