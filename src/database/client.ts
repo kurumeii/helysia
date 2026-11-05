@@ -8,7 +8,7 @@ export const createDb = (env: Pick<Env, "DATABASE_URL" | "NODE_ENV">) =>
 			url: env.DATABASE_URL,
 		},
 		casing: "snake_case",
-		logger: env.NODE_ENV !== "production",
+		logger: env.NODE_ENV === "development",
 		schema,
 	});
 

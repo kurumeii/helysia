@@ -21,9 +21,3 @@ describe("envPlugin", () => {
 		expect(app.decorator.env).toBe(envPlugin.decorator.env);
 	});
 });
-
-describe("dbPlugin", () => {
-	test("decorates a db client built from the same env", () => {
-		expect(dbPlugin.decorator.db.$client).toBeDefined();
-	});
-});

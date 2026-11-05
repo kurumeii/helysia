@@ -1,5 +1,10 @@
 import { Elysia, StatusMap } from "elysia";
 import pc from "picocolors";
+import { envPlugin } from "./env.plugin.ts";
+
+type LoggerOptions = {
+	silent?: boolean;
+};
 
 const colorStatus = (status: number) => {
 	if (status >= 500) return pc.red(status);
@@ -8,21 +13,25 @@ const colorStatus = (status: number) => {
 	return pc.green(status);
 };
 
-export const loggerPlugin = () =>
+export const loggerPlugin = ({
+	silent = envPlugin.decorator.env.NODE_ENV === "test",
+}: LoggerOptions = {}) =>
 	new Elysia({
 		name: "plugin.logger",
 	})
 		.onStart(({ server }) => {
+			if (silent) return;
 			console.log(
 				`${pc.green("●")} Server started at ${pc.cyan(server?.url.origin)}`,
 			);
 		})
 		.onError({ as: "global" }, ({ code, error }) => {
-			if (code === "NOT_FOUND") return;
+			if (silent || code === "NOT_FOUND") return;
 			console.error(error);
 		})
 		.derive({ as: "global" }, () => ({ startedAt: performance.now() }))
 		.onAfterResponse({ as: "global" }, ({ request, path, set, startedAt }) => {
+			if (silent) return;
 			const status =
 				typeof set.status === "string"
 					? StatusMap[set.status]

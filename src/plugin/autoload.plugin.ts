@@ -3,7 +3,13 @@ import { Elysia } from "elysia";
 import { autoload } from "elysia-autoload";
 import { ROUTES } from "@/shared/routes.ts";
 
-export const autoloadPlugin = async () => {
+type AutoloadOptions = {
+	routes?: Record<string, string>;
+};
+
+export const autoloadPlugin = async ({
+	routes = ROUTES,
+}: AutoloadOptions = {}) => {
 	const loaded = new Elysia({ name: "plugin.autoload" }).use(
 		await autoload({
 			dir: resolve(import.meta.dir, "../modules"),
@@ -16,7 +22,7 @@ export const autoloadPlugin = async () => {
 			path.length > 1 ? path.replace(/\/$/, "") : path,
 		),
 	);
-	const missing = Object.values(ROUTES).filter((path) => !registered.has(path));
+	const missing = Object.values(routes).filter((path) => !registered.has(path));
 	if (missing.length > 0) {
 		throw new Error(
 			`ROUTES is out of sync with src/modules. Not registered: ${missing.join(", ")}`,
