@@ -1,9 +1,10 @@
 import { sessions, users } from "@db";
+import convert from "convert";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { dbPlugin } from "./db.plugin.ts";
 
-export const REMEMBER_TTL_SECONDS = 60 * 60 * 24 * 30;
+export const REMEMBER_TTL_SECONDS = convert(30, "days").to("seconds");
 
 const TOKEN_BYTES = 32;
 

@@ -1,4 +1,5 @@
 import { jwt } from "@elysiajs/jwt";
+import convert from "convert";
 import { Elysia, t } from "elysia";
 import { HX, ROUTES } from "@/shared/routes.ts";
 import { envPlugin } from "./env.plugin.ts";
@@ -9,7 +10,7 @@ import {
 } from "./session.plugin.ts";
 
 const SESSION_COOKIE = "session";
-const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+const SESSION_TTL_SECONDS = convert(7, "days").to("seconds");
 const REMEMBER_COOKIE = "remember";
 
 const cookieOptions = (production: boolean) =>
@@ -19,6 +20,8 @@ const cookieOptions = (production: boolean) =>
 		secure: production,
 		path: "/",
 	}) as const;
+
+const jwtExpiresAt = () => Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
 
 export type SessionUser = {
 	id: string;
@@ -71,7 +74,7 @@ export const authPlugin = () =>
 							value: await jwt.sign({
 								userId: user.id,
 								username: user.username,
-								exp: `${SESSION_TTL_SECONDS}s`,
+								exp: jwtExpiresAt(),
 							}),
 							...options,
 							maxAge: SESSION_TTL_SECONDS,
@@ -91,7 +94,7 @@ export const authPlugin = () =>
 							value: await jwt.sign({
 								userId: u.id,
 								username: u.username,
-								exp: `${SESSION_TTL_SECONDS}s`,
+								exp: jwtExpiresAt(),
 							}),
 							...options,
 							maxAge: SESSION_TTL_SECONDS,
