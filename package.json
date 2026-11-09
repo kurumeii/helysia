@@ -22,7 +22,6 @@
 	},
 	"dependencies": {
 		"@bogeychan/elysia-etag": "^0.1.0",
-		"@elysiajs/bearer": "^1.4.4",
 		"@elysiajs/cors": "^1.4.2",
 		"@elysiajs/html": "^1.4.2",
 		"@elysiajs/jwt": "^1.4.2",
