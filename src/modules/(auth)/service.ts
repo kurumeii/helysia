@@ -1,14 +1,17 @@
 import { userSchemas, users } from "@db";
 import { dbPlugin } from "@plugin";
 import { eq } from "drizzle-orm";
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 
 const DUMMY_HASH = await Bun.password.hash("not-a-real-password");
 
 export const AuthService = new Elysia({ name: "Auth.Service" })
 	.use(dbPlugin)
 	.model({
-		"auth.login": userSchemas.login,
+		"auth.login": t.Composite([
+			userSchemas.login,
+			t.Object({ remember: t.Optional(t.BooleanString()) }),
+		]),
 		"auth.register": userSchemas.register,
 	})
 	.derive({ as: "scoped" }, ({ db }) => ({

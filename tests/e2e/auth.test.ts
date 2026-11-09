@@ -5,6 +5,7 @@ import {
 	cleanupUsers,
 	password,
 	registerUser,
+	rememberCookie,
 	sessionCookie,
 	signSessionCookie,
 } from "./helpers.ts";
@@ -115,6 +116,93 @@ describe("session cookie", () => {
 
 	test("an expired token is treated as a guest", async () => {
 		const cookie = await signSessionCookie({ exp: nowInSeconds() - 60 });
+		await expectGuest(cookie);
+	});
+});
+
+describe("remember me", () => {
+	const loginRemembered = async () => {
+		const { username } = await registerUser();
+		const res = await call(ROUTES.login, {
+			method: "POST",
+			json: { username, password, remember: true },
+		});
+		expect(res.status).toBe(200);
+		return { username, res, cookie: rememberCookie(res) };
+	};
+
+	test("login with remember issues a persistent remember cookie", async () => {
+		const { res, cookie } = await loginRemembered();
+
+		expect(sessionCookie(res).startsWith("session=")).toBe(true);
+		expect(cookie.startsWith("remember=")).toBe(true);
+
+		const header = res.headers
+			.getSetCookie()
+			.find((value) => value.startsWith("remember="));
+		expect(header).toContain("HttpOnly");
+		expect(header).toContain("Max-Age=2592000");
+	});
+
+	test("login without remember issues only the session cookie", async () => {
+		const { username } = await registerUser();
+		const res = await call(ROUTES.login, {
+			method: "POST",
+			json: { username, password },
+		});
+
+		expect(res.status).toBe(200);
+		expect(
+			res.headers
+				.getSetCookie()
+				.some((cookie) => cookie.startsWith("remember=")),
+		).toBe(false);
+	});
+
+	test("accepts the checkbox's string value", async () => {
+		const { username } = await registerUser();
+		const res = await call(ROUTES.login, {
+			method: "POST",
+			json: { username, password, remember: "true" },
+		});
+
+		expect(res.status).toBe(200);
+		expect(rememberCookie(res).startsWith("remember=")).toBe(true);
+	});
+
+	test("a remembered guest is revived and the token is rotated", async () => {
+		const { cookie } = await loginRemembered();
+
+		const revived = await call(ROUTES.todos, { cookie });
+		expect(revived.status).toBe(200);
+		expect(sessionCookie(revived).startsWith("session=")).toBe(true);
+
+		const rotated = rememberCookie(revived);
+		expect(rotated).not.toBe(cookie);
+
+		await expectGuest(cookie);
+	});
+
+	test("a tampered remember token is treated as a guest", async () => {
+		const { cookie } = await loginRemembered();
+		const index = cookie.length - 1;
+		const tampered = `${cookie.slice(0, index)}${cookie[index] === "a" ? "b" : "a"}`;
+
+		await expectGuest(tampered);
+	});
+
+	test("logout revokes the remember token", async () => {
+		const { cookie } = await loginRemembered();
+
+		const res = await call(ROUTES.logout, { method: "POST", cookie });
+		expect(res.status).toBe(200);
+
+		const cleared = res.headers
+			.getSetCookie()
+			.find((header) => header.startsWith("remember="));
+		expect(cleared).toStartWith("remember=;");
+		expect(cleared).toContain("Max-Age=0");
+
 		await expectGuest(cookie);
 	});
 });

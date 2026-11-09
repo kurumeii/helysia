@@ -15,6 +15,13 @@
       "when": 1793859347670,
       "tag": "0001_mute_mister_sinister",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794195741277,
+      "tag": "0002_lively_tiger_shark",
+      "breakpoints": true
     }
   ]
 }

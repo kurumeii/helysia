@@ -22,7 +22,7 @@ export default new Elysia()
 				);
 			}
 
-			await startSession(found);
+			await startSession(found, body.remember === true);
 			set.headers[HX.redirect] = ROUTES.todos;
 			return "";
 		},

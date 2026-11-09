@@ -40,6 +40,14 @@ export const sessionCookie = (res: Response) => {
 	return raw.split(";")[0] ?? raw;
 };
 
+export const rememberCookie = (res: Response) => {
+	const raw = res.headers
+		.getSetCookie()
+		.find((cookie) => cookie.startsWith("remember="));
+	if (!raw) throw new Error("response has no remember cookie");
+	return raw.split(";")[0] ?? raw;
+};
+
 export const signSessionCookie = async ({
 	secret = createEnv().JWT_SECRET,
 	exp,

@@ -27,6 +27,15 @@ export const LoginPage = () => (
 						autocomplete="current-password"
 						required
 					/>
+					<label class="label cursor-pointer justify-start gap-2">
+						<input
+							name="remember"
+							type="checkbox"
+							value="true"
+							class="checkbox checkbox-sm"
+						/>
+						<span class="label-text">Remember me</span>
+					</label>
 					<button type="submit" class="btn btn-primary">
 						Log in
 					</button>

@@ -4,8 +4,8 @@ import { HX, ROUTES } from "@/shared/routes.ts";
 
 export default new Elysia()
 	.use(authPlugin())
-	.post("/", ({ endSession, set }) => {
-		endSession();
+	.post("/", async ({ endSession, set }) => {
+		await endSession();
 		set.headers[HX.redirect] = ROUTES.home;
 		return "";
 	});
